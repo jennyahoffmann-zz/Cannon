@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Logout</title>
+</head>
+
+<script src="http://chessboardjs.com/js/jquery-1.10.1.min.js"></script>
+<script>
+
+/*
+ * On document load: send logout message to server.
+ */
+$(document).ready(function() {
+	  var params = 'usecase=logout';
+	  var request = new XMLHttpRequest();
+
+	  request.open('GET', '/GameServer/GameServerServlet?' + params, false);  
+		
+	  request.send(params);
+});
+</script>
+
+<body>
+<h1>SWTPP Chess Portal</h1>
+
+User logged off. <a href="/GameServer/index.html">Back to Login</a>
+</body>
+</html>

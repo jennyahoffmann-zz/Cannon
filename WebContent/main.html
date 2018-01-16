@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>SWTPP Game Server: Main Page</title>
+
+<script src="http://chessboardjs.com/js/json3.min.js"></script>
+<script src="http://chessboardjs.com/js/jquery-1.10.1.min.js"></script>
+<script>
+
+/*
+ * On document start: load data of current user: names and current unfinished games.
+ */
+$(document).ready(function() {
+
+   var params = 'usecase=getuserdata';
+   var request = new XMLHttpRequest();
+
+   // create get user data request
+   request.open('GET', '/GameServer/GameServerServlet?' + params, false);  
+   request.onreadystatechange = function() {
+	   if (this.responseText == '') {
+		   // something went wrong: go back to login
+		   window.location.href ="/GameServer/index.html";
+		   return;
+	   }
+	   else {	   
+		  // display json data 
+	      var userDataJSON = jQuery.parseJSON(request.responseText);
+		  
+		  // dynamically create table of games
+		  var gameRows ='<tr><th>ID</th><th>Players</th><th></th></tr>';
+		  $.each(userDataJSON.games,function(key, arr){
+			  gameRows +='<td>'+arr.join('</td><td>')+'</td><td><a href="Cannon.html?game=' + arr[0] + '" target="_blank">Continue</a></td></tr>';
+		
+		  });
+		
+		  // display stuff
+		  $('#username').html( 'current user: ' + userDataJSON.userFirstName);
+		  $('#games').html(gameRows);
+	   }
+   }
+
+   // submit request
+   request.send(params);
+});
+
+</script>
+</head>
+<body>
+<table>
+<tr><td width="50%">
+<h1>SWTPP Game Server: Cannon</h1>
+</td>
+<td>
+<div align="right"><div id="username"></div><a href="logout.html">Log off</a></div>
+</td></tr>
+</table>
+
+<h2>Your Games</h2>
+
+<table id="games"></table>
+
+<h2>Options</h2>
+
+<br><a href="Cannon.html?start" target="_blank">Start new Game</a>
+<br><a href="Cannon.html?join" target="_blank">Join Game</a>
+<br><a href="Cannon.html?haskell" target="_blank">Start new Game against Haskell-Bot</a>
+<br><a href="Statistics.html" >Open Statistics</a>
+
+</body>
+</html>

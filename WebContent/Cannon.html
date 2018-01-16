@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SWTPP Game Server: Lasca Edition</title>
+  <meta name="viewport" content="width=980px, initial-scale=1">
+  <link rel="shortcut icon" href="http://chessboardjs.com/img/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="http://chessboardjs.com/css/normalize-2.1.2.min.css" />
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" />
+  <link rel="stylesheet" href="http://chessboardjs.com/css/site2.css" />
+  <link rel="stylesheet" href="http://chessboardjs.com/css/chessboard.css" />
+  <script src="http://chessboardjs.com/js/json3.min.js"></script>
+  <script src="http://chessboardjs.com/js/jquery-1.10.1.min.js"></script>
+  <script src="http://chessboardjs.com/js/prettify.js"></script>
+  <script src="js/cannonboard.js"></script>
+</head>
+<body>
+
+<!-- canvas dummy field (invisible) to build figures from (required for lasca js) -->
+<canvas id="mycanvas" width="60" height="60" style="border:4px solid #000000;display:none"></canvas> 
+
+<table>
+<tr><td width="50%">
+<h1>SWTPP Game Server: Cannon</h1>
+</td>
+<td>
+<div align="right"><div id="username"></div><a href="logout.html">Log off</a></div>
+</td></tr>
+<tr>
+<td width="50%">
+Game ID: <div id="gameID"></div><br>White Player: <div id="white"></div><br>Black Player: <div id="black"></div><br>Status:<div id="status"></div><br><div id="info"></div><br>
+  <input type="button" id="giveUpBtn" value="Give up" />
+  <input type="button" id="drawBtn" value="Call Draw" />
+</td>
+<td><div id="cannonboard" style="width: 600px"> </div></td>
+
+</tr>
+</table>
+
+<!-- <img id="canvasImg" alt="Right click to save me!"> -->   
+
+<script>
+
+var cannonboard;
+var gameID;
+
+function isTouchDevice() {
+  return ('ontouchstart' in document.documentElement);
+}
+
+/*
+ * sends any message with given params to servlet and returns response
+ */
+function sendGETMessage(params, callback) {
+	var request = new XMLHttpRequest();
+
+	request.open('GET', '/GameServer/GameServerServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange = callback
+	
+	request.send(params);
+	
+	return request.response
+}
+
+// reload display to show new data
+function update() {
+	window.location.href = "/GameServer/Cannon.html?gameID=" + gameID;
+}
+
+function giveUp() {
+	sendGETMessage('usecase=giveUp&gameID=' + gameID, update);
+}
+
+function callDraw() {
+	sendGETMessage('usecase=callDraw&gameID=' + gameID, update);
+}
+
+function moveRequest(source, target) {
+	sendGETMessage('usecase=trymove&gameID=' + gameID + '&move=' + source + '-' + target, update);
+}
+
+$(document).ready(function() {
+	// parse request parameters for game ID or command 
+	var parameter = window.location.search.replace( "?", "" ); // will return the GET parameter 
+	var values = parameter.split("=");
+	var request = new XMLHttpRequest();
+	var params;
+	
+	if (values[0] == 'haskell') {
+		// start new game against haskell bot
+		params = 'usecase=startgame&bots=haskell';
+	} else if (values.length == 2) {
+		// display data of game with id gameID
+		gameID = values[1];
+		params = 'usecase=getgamedata&gameID=' + gameID;
+	} else if (values[0] == 'start'){
+		// start new game without bots
+		params = 'usecase=startgame&bots=';
+	} else if (values[0] == 'join'){
+		// join any existing game
+		params = 'usecase=joingame';
+	}
+	
+	request.open('GET', '/GameServer/GameServerServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange =  function() {
+		//alert(this.responseText);
+		if (this.responseText == 'nogame') {
+			// no waiting games- back to main
+			alert("No games waiting");
+			window.location.href = "/GameServer/main.html";
+		} else if (this.responseText != '') {
+			// display data of joined game
+			var gameDataJSON = jQuery.parseJSON(this.responseText);
+			
+			displayBoard(gameDataJSON);
+		} else {
+			// something went wrong - back to index
+			window.location.href = "/GameServer/index.html";
+			return;
+		}
+	  
+		if (!gameDataJSON.yourturn && !(gameDataJSON.status =='Finished')) {
+			// update display after 5s
+			setTimeout(update, 5000);
+		}
+	}
+	
+	request.send(params);
+});
+
+/*
+ * updates html display with all data delivered in json gameData
+ */
+function displayBoard(gameData) {
+	gameID = gameData.gameID;
+	
+	// display data and register callbacks
+	$('#gameID').html(gameID);
+	$('#white').html(gameData.players[0]);
+	$('#giveUpBtn').on('click', giveUp);
+	$('#drawBtn').on('click', callDraw);
+	
+	var myturn = false;
+	
+	// update status fields
+	if (gameData.status == 'Wait') {
+		$('#status').html('Waiting for second player to enter game.');
+	} else {
+		$('#black').html(gameData.players[1]);
+		$('#info').html(gameData.info);
+		if (gameData.status == 'Finished') {
+			$('#status').html('Game over.'); 
+		} else if (gameData.status == 'Surrendered') {
+			$('#status').html('Game over'); 
+			// something else?	
+		} else if (gameData.status == 'Draw') {
+			$('#status').html('Game over'); 
+			// something else?
+		} else {
+			if (gameData.yourturn) {
+				$('#status').html('Your turn.'); 
+				myturn = true
+			} else {
+				$('#status').html('Other player\'s turn.');
+			}
+		}
+	}
+	
+	if (myturn) {
+		// if it's my turn- enable drag and drop of figures 
+		var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
+				moveRequest(source, target);
+			  };
+		
+		// create active board
+		lascaboard = new CannonBoard('cannonboard', {
+		    draggable: true,
+		    dropOffBoard: 'snapback',
+		    sparePieces: false, 
+		    onDrop: onDrop,
+		    showErrors: 'alert',
+		    position: gameData.board
+		  });		
+	} else {
+		// not my turn: create passive board
+		lascaboard = new CannonBoard('cannonboard', {
+		    draggable: false,
+		    dropOffBoard: 'snapback',
+		    sparePieces: false,
+		    showErrors: 'alert',
+		    position: gameData.board
+		});
+	}
+	
+  prettyPrint();
+
+  // prevent "browser drag" of the black king
+  //$('#hero img').on('mousedown', function(e) { e.preventDefault(); });
+  $('#hero img').on('mousedown', function(e) { e.preventDefault(); });
+
+  // prevent hover problems on touch devices
+  if (isTouchDevice() === true) {
+    $('#start').removeClass('hover-effect');
+  }
+}
+
+</script>
+</body>
+
+</html>
+
+

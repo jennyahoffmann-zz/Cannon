@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>chessboard.js &raquo; Home</title>
+  <meta name="viewport" content="width=980px, initial-scale=1">
+  <link rel="shortcut icon" href="http://chessboardjs.com/img/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="http://chessboardjs.com/css/normalize-2.1.2.min.css" />
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" />
+  <link rel="stylesheet" href="http://chessboardjs.com/css/site2.css" />
+  <link rel="stylesheet" href="http://chessboardjs.com/css/chessboard.css" />
+  <script src="http://chessboardjs.com/js/json3.min.js"></script>
+  <script src="http://chessboardjs.com/js/jquery-1.10.1.min.js"></script>
+  <script src="http://chessboardjs.com/js/prettify.js"></script>
+  <script src="http://chessboardjs.com/js/chessboard.js"></script>
+</head>
+<body>
+
+<table>
+<tr><td width="50%">
+<h1>SWTPP Chess Portal</h1>
+</td>
+<td>
+<div align="right"><div id="username"></div><a href="logout.html">Log off</a></div>
+</td></tr>
+<tr>
+<td width="50%">
+Game ID: <div id="gameID"></div><br>White Player: <div id="white"></div><br>Black Player: <div id="black"></div><br>Status:<div id="status"></div><br><div id="info"></div><br>
+  <input type="button" id="giveUpBtn" value="Give up" />
+  <input type="button" id="drawBtn" value="Call Draw" />
+</td>
+<td><div id="board2" style="width: 400px"> </div></td>
+
+</tr>
+</table>
+
+<script>
+
+var board2;
+var gameID;
+
+function isTouchDevice() {
+  return ('ontouchstart' in document.documentElement);
+}
+
+function sendGETMessage(params, callback) {
+	var request = new XMLHttpRequest();
+
+	request.open('GET', '/GameServer/ChessServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange = callback
+	
+	request.send(params);
+	
+	return request.response
+}
+
+function update() {
+	window.location.href = "/GameServer/Chess.html?gameID=" + gameID;
+}
+
+function giveUp() {
+	sendGETMessage('usecase=giveUp&gameID=' + gameID, update);
+}
+
+function callDraw() {
+	sendGETMessage('usecase=callDraw&gameID=' + gameID, update);
+}
+
+function moveRequest(source, target) {
+	sendGETMessage('usecase=trymove&gameID=' + gameID + '&move=' + source + ' ' + target, update);
+}
+
+
+$(document).ready(function() {
+	var request = new XMLHttpRequest();
+	var params = 'usecase=getuserdata'
+
+	request.open('GET', '/GameServer/GameServerServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange =  function() {
+		   if (this.responseText == '') {
+			   window.location.href ="/GameServer/index.html";
+		   } else {
+			    var userDataJSON = jQuery.parseJSON(this.responseText);
+				$('#username').html( 'current user: ' + userDataJSON.userFirstName);
+			   displayGame();
+		   }
+	}
+	
+	request.send(params);
+});
+
+function displayGame() {
+	var parameter = window.location.search.replace( "?", "" ); // will return the GET parameter 
+	var values = parameter.split("=");
+	var request = new XMLHttpRequest();
+	var params;
+	
+	if (values[0] == 'randombot') {
+		params = 'usecase=startbotgame&bots=random';
+	} else if (values[0] == 'haskellbot') {
+			params = 'usecase=startbotgame&bots=haskell';
+	} else if (values.length == 2) {
+		gameID = values[1];
+		params = 'usecase=getgamedata&gameID=' + gameID;
+	} else if (values[0] == 'start'){
+		params = 'usecase=startgame&bots=';
+	} else if (values[0] == 'join'){
+		params = 'usecase=joingame';
+	}
+	
+	request.open('GET', '/GameServer/GameServerServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange =  function() {
+		if (this.responseText == 'nogame') {
+			alert("No games waiting");
+			window.location.href = "/GameServer/main.html";
+		} else if (this.responseText != '') {
+			var gameDataJSON = jQuery.parseJSON(this.responseText);
+			
+			displayBoard(gameDataJSON);
+		} else {
+			window.location.href = "/GameServer/index.html";
+			return;
+		}
+	  
+		setTimeout(update, 5000);
+	}
+	
+	request.send(params);
+}
+
+function displayBoard(gameData) {
+	gameID = gameData.gameID;
+	
+	$('#gameID').html(gameID);
+	$('#white').html(gameData.players[0]);
+	$('#giveUpBtn').on('click', giveUp);
+	$('#drawBtn').on('click', callDraw);
+	
+	var myturn = false;
+	
+	
+	if (gameData.status == 'Wait') {
+		$('#status').html('Waiting for second player to enter game.');
+	} else {
+		$('#black').html(gameData.players[1]);
+		$('#info').html(gameData.info);
+		if (gameData.status == 'Finished') {
+			$('#status').html('Game over.'); 
+	
+		} if (gameData.status == 'Surrendered') {
+			$('#status').html('Game over'); 
+			// something else?	
+		}  if (gameData.status == 'Draw') {
+			$('#status').html('Game over'); 
+			// something else?
+		} else {
+			$('#info').html(gameData.info);
+			if (gameData.yourturn) {
+				$('#status').html('Your turn.'); 
+				myturn = true
+			} else {
+				$('#status').html('Other player\'s turn.');
+			}
+		}
+	}
+	
+	if (myturn) {
+		var onDrop = function(source, target, piece, newPos, oldPos, orientation) {
+				moveRequest(source, target);
+			  };
+			  
+		board2 = new ChessBoard('board2', {
+		    draggable: true,
+		    dropOffBoard: 'snapback',
+		    sparePieces: false, 
+		    onDrop: onDrop,
+		    showErrors: 'alert',
+		    position: gameData.board 
+		  });		
+	} else {
+		board2 = new ChessBoard('board2', {
+		    draggable: false,
+		    dropOffBoard: 'snapback',
+		    sparePieces: false,
+		    showErrors: 'alert',
+		    position: gameData.board
+		});
+	}
+	
+  prettyPrint();
+
+  // prevent "browser drag" of the black king
+  //$('#hero img').on('mousedown', function(e) { e.preventDefault(); });
+  $('#hero img').on('mousedown', function(e) { e.preventDefault(); });
+
+  // prevent hover problems on touch devices
+  if (isTouchDevice() === true) {
+    $('#start').removeClass('hover-effect');
+  }
+}
+
+</script>
+</body>
+
+</html>
+
+

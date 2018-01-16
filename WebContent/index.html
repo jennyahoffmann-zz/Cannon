@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SWTPP Game Server: Login</title>
+  <meta name="viewport" content="width=980px, initial-scale=1">
+  
+    <script src="http://chessboardjs.com/js/jquery-1.10.1.min.js"></script>
+</head>
+
+<!-- Start with the body of the html as the rest is in head.jsp. -->
+<body id="ts">
+
+<script>
+
+// on entry: update error fields if error occurred
+$(document).ready(function() {
+	var parameter = window.location.search.replace( "?", "" ); // will return the GET parameter 
+
+	var values = parameter.split("=");
+
+	if (values.length == 2) {
+		if(values[1] == 'unknown') {
+			$('#errorlogin').html('User/Pwd unbekannt') ;
+		}
+		if(values[1] == 'exists') {
+			$('#errorregister').html('User existiert bereits') ;
+		}
+		if(values[1] == 'badinput') {
+			$('#errorregister').html('Falsche Eingabe. Felder können nicht leer sein. Name besteht aus Buchstaben und Leerzeichen.') ;
+		}
+		
+	}
+});
+</script>
+
+<br/>
+<h2> Schon registriert? Bitte anmelden </h2>
+<h3 id="errorlogin" ></h3>
+<br/>
+
+	<!-- A form of this kind is forwarded by the browser to our servlet. All form inputs are parameters in the request that arrives in the doGet method of the servlet. -->
+    <form action="/GameServer/GameServerServlet" method="post">
+     	<table class="regular">
+     	
+			<tr>
+				<!-- simple text field in the name -->
+				<td class="regular">ID</td>
+				<td> </td>
+				<td><input type="text" name="id" /></td>
+			</tr>
+			<tr>
+			    <!--  To make it simple, the passwort is just submitted unencrypted in the request. Of course this would be done differently in a real application. -->
+				<td>Passwort</td>
+				<td> </td>
+				<td><input type="password" name="password" /></td>
+			</tr>
+			<tr>
+				<!--  this is the button that launches the action. -->
+				<td width="20px" > </td>
+				<td><input type="button" value="login" onClick="login(this.form)" /></td>
+			</tr>
+			<tr><td>
+			</td></tr>
+		</table>
+	</form>
+		
+
+	
+
+<br/>
+<br/>
+<h2> Neuer User? Bitte registrieren.</h2>
+<h3 id="errorregister"></h3>
+<br/>
+    <form action="/GameServer/GameServerServlet" method="post">
+
+     	<table class="regular">
+     	<tr>
+      		<td>Name</td>
+      		<td width="20px" > </td>
+      		<td><input type="text" name="name" /></td>
+      	</tr>
+     	<tr>
+      		<td>ID</td>
+      		<td width="20px" > </td>
+      		<td><input type="text" name="id" /></td>
+      	</tr>
+      	<tr>
+      		<td>Passwort</td>
+      		<td width="20px" > </td>
+      		<td><input type="password" name="password"/></td>
+      	</tr>
+      	<tr>
+      		<td width="20px" > </td>
+      		<td><input type="button" value="register" onClick="register(this.form)"/></td>
+      	</tr>
+     	</table>
+
+     </form>
+<br/>
+<br/>
+
+<script>
+
+/*
+ * Function event handler of login form. creates login request and parses server reponse. Redirects to main if successful. 
+ */
+function login(form) {
+	var params = 'usecase=login&id=' + form.id.value + '&password=' + form.password.value;
+	var request = new XMLHttpRequest();
+	
+	request.open('POST', '/GameServer/GameServerServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange = function() {
+		if (this.responseText == '') {
+			window.location.href = "main.html";
+		} else {
+			window.location.href = "index.html?error=unknown";
+		}
+	
+	}
+	
+	request.send(params);
+}	
+
+
+/*
+ * Function event handler of register form. creates login request and parses server reponse. Redirects to main if successful. 
+ */
+function register(form) {
+	var params = 'usecase=register&name=' + form.name.value + '&id=' + form.id.value + '&password=' + form.password.value;
+	var request = new XMLHttpRequest();
+	
+	// need post request so that data is not displayed in browser
+	request.open('POST', '/GameServer/GameServerServlet?' + params, false);  // `false` makes the request synchronous
+	request.onreadystatechange = function() {
+		if (this.responseText == '') {
+			window.location.href = "/GameServer/main.html";
+		} else if (this.responseText == 'exists') {
+			window.location.href = "/GameServer/index.html?error=exists";
+		} else if (this.responseText == 'badinput') {
+			window.location.href = "/GameServer/index.html?error=badinput";
+		}
+	}
+	
+	request.send(params);	
+}
+
+</script>
+</body>
+</html>
+
+
