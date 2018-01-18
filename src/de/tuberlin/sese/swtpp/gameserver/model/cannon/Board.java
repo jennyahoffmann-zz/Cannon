@@ -15,9 +15,20 @@ public class Board {
 	
 	private char[][] boardState = {row9, row8, row7, row6, row5, row4, row3, row2, row1, row0};
 	
-	/***********************
+	private boolean whiteTownPlaced = false;
+	private boolean blackTownPlaced = false;
+	
+	private boolean whiteNext = false;
+	
+	private int targetRow = 0;
+	private int targetColumn = 0;
+	private int startRow = 0;
+	private int startColumn = 0;
+	
+	
+	/*******************************
 	* Board State
-	***********************/
+	*******************************/
 	
 	public String getBoard() {
 		String boardStateString = "";
@@ -61,6 +72,8 @@ public class Board {
 				newStateRowChars = newStateRows[row].toCharArray();
 				for (char c : newStateRowChars) {
 					if (c == 'b' || c == 'B' || c == 'w' || c == 'W' ) {
+						if(c == 'B') blackTownPlaced = true;
+						if(c == 'W') whiteTownPlaced = true;
 						boardState[row][column] = c;
 						column++;
 					} else {
@@ -79,6 +92,52 @@ public class Board {
 				boardState[i][j] = '1';
 			}
 		}
+	}
+	
+	/*******************************
+	 * Coordinate Mapping
+	 ******************************/
+	
+	private void mapMoveString(String moveString) {
+		char[] c = moveString.toCharArray();
+		startColumn = convertChar(c[0]);
+		startRow = Character.getNumericValue(c[1]);
+		targetColumn = convertChar(c[3]);
+		targetRow = Character.getNumericValue(c[4]);
+	}
+	
+	private int convertChar(char c) {
+		return c == 'a'? 0 : c == 'b'? 1 : c == 'c'? 2 : c == 'd'? 3 : c == 'e'? 4 : c == 'f'? 5 : c == 'g'? 6 : c == 'h'? 7 : c == 'i'? 8 : 9;
+	}
+	
+	/*******************************
+	* Try Move
+	*******************************/
+
+	public boolean tryMove(String moveString, boolean whiteNext) {
+		this.whiteNext = whiteNext;
+		// transportiere start- und zielfeld
+		
+		
+		if (isTownPlaced()) {
+			return placeTown();
+		}
+		// is move valid
+		return false;
+	}
+	
+	private boolean isTownPlaced() {
+		if (whiteNext) {
+			return whiteTownPlaced;
+		}
+		return blackTownPlaced;
+	}
+	
+	
+
+	public boolean isGameFinished() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 
