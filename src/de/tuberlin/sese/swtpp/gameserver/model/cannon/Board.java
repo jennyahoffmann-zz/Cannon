@@ -35,9 +35,7 @@ public class Board {
 						break;
 					}
 					boardStateString = boardStateString + Integer.toString(emptyFields);
-					continue;
-				}
-				if (row[column] == 'b' || row[column] == 'B' || row[column] == 'w' || row[column] == 'W') {
+				} else {
 					boardStateString = boardStateString + row[column];
 					column++;
 				}

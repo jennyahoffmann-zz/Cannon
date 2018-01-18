@@ -65,7 +65,7 @@ public class TryMoveTest {
 	 * !!!!!!!!! To be implemented !!!!!!!!!!!!
 	 *******************************************/
 	
-	@Test
+	
 	/**
 	public void exampleTest() {
 		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7/5b4/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
@@ -73,11 +73,20 @@ public class TryMoveTest {
 		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w3w/2w4w2/5b4/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
 	}
 	*/
-
-	public void exampleTest() {
+	
+	
+	@Test
+	public void stateBoardWithEmptyLines() {
+		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7//b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7//b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true, false, false);
+	}
+	
+	@Test
+	public void stateBoard() {
 		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7/5b4/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
 		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7/5b4/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true, false, false);
 	}
+	
 	
 	//TODO: implement test cases of same kind as example here
 }
