@@ -14,6 +14,7 @@ public class Board {
 	private char[] row0 = {'1','1','1','1','1','1','1','1','1','1'};
 	
 	private char[][] boardState = {row9, row8, row7, row6, row5, row4, row3, row2, row1, row0};
+	//boardState[row][column]
 	
 	private boolean whiteTownPlaced = false;
 	private boolean blackTownPlaced = false;
@@ -116,8 +117,7 @@ public class Board {
 
 	public boolean tryMove(String moveString, boolean whiteNext) {
 		this.whiteNext = whiteNext;
-		// transportiere start- und zielfeld
-		
+		mapMoveString(moveString);
 		
 		if (isTownPlaced()) {
 			return placeTown();
@@ -133,8 +133,21 @@ public class Board {
 		return blackTownPlaced;
 	}
 	
+	private boolean placeTown() {
+		// coordinates valid
+		if (startRow == targetRow && startColumn == targetColumn && targetColumn != 0 && targetColumn != 9) {
+			if (whiteNext && targetRow == 9) {
+				boardState[targetRow][targetColumn] = 'W';
+				whiteTownPlaced = true;
+			}
+			if (!whiteNext && targetRow == 0) {
+				boardState[targetRow][targetColumn] = 'B';
+				blackTownPlaced = true;
+			}
+		}
+		return false;
+	}
 	
-
 	public boolean isGameFinished() {
 		// TODO Auto-generated method stub
 		return false;
