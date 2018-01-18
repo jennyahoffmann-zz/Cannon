@@ -13,7 +13,7 @@ public class Board {
 	private char[] row1 = {'b','1','b','1','b','1','b','1','b','1'};
 	private char[] row0 = {'1','1','1','1','1','1','1','1','1','1'};
 	
-	private char[][] boardState = {row9, row8, row7, row6, row5, row4, row3, row2, row1, row0};
+	private char[][] boardState = {row0, row1, row2, row3, row4, row5, row6, row7, row8, row9};
 	//boardState[row][column]
 	
 	private boolean whiteTownPlaced = false;
@@ -35,26 +35,26 @@ public class Board {
 		String boardStateString = "";
 		
 		for (char[] row : boardState) {
-			int column = 0;
-			while (column <= 9) {
+			int column = 9;
+			while (column >= 0) {
 				int emptyFields = 0;
 				if (row[column] == '1') {
-					while (column <= 9 && row[column] == '1') {
+					while (column >= 0 && row[column] == '1') {
 						emptyFields++;
-						column++;
+						column--;
 					}
 					if (emptyFields == 10) {
 						break;
 					}
-					boardStateString = boardStateString + Integer.toString(emptyFields);
+					boardStateString = Integer.toString(emptyFields) + boardStateString;
 				} else {
-					boardStateString = boardStateString + row[column];
-					column++;
+					boardStateString = row[column] + boardStateString;
+					column--;
 				}
 			}
-			boardStateString = boardStateString + "/";
+			boardStateString = "/" + boardStateString;
 		}
-		return boardStateString.substring(0, boardStateString.length() -1);
+		return boardStateString.substring(1, boardStateString.length());
 	}
 	
 	public void setBoard(String state) {
@@ -67,7 +67,7 @@ public class Board {
 			// row empty
 			if (newStateRows[row].length() == 0) {
 				for (int i = column; i <= 9; i++ ) {
-					boardState[row][i] = '1';
+					boardState[9-row][i] = '1';
 				}
 			} else {
 				newStateRowChars = newStateRows[row].toCharArray();
@@ -75,11 +75,11 @@ public class Board {
 					if (c == 'b' || c == 'B' || c == 'w' || c == 'W' ) {
 						if(c == 'B') blackTownPlaced = true;
 						if(c == 'W') whiteTownPlaced = true;
-						boardState[row][column] = c;
+						boardState[9-row][column] = c;
 						column++;
 					} else {
 						for (int i = column; column < i+Character.getNumericValue(c); column++) {
-							boardState[row][column] = '1';
+							boardState[9-row][column] = '1';
 						}
 					}
 				}
@@ -119,7 +119,7 @@ public class Board {
 		this.whiteNext = whiteNext;
 		mapMoveString(moveString);
 		
-		if (isTownPlaced()) {
+		if (!isTownPlaced()) {
 			return placeTown();
 		}
 		// is move valid
@@ -138,11 +138,11 @@ public class Board {
 		if (startRow == targetRow && startColumn == targetColumn && targetColumn != 0 && targetColumn != 9) {
 			if (whiteNext && targetRow == 9) {
 				boardState[targetRow][targetColumn] = 'W';
-				whiteTownPlaced = true;
+				return whiteTownPlaced = true;
 			}
 			if (!whiteNext && targetRow == 0) {
 				boardState[targetRow][targetColumn] = 'B';
-				blackTownPlaced = true;
+				return blackTownPlaced = true;
 			}
 		}
 		return false;
