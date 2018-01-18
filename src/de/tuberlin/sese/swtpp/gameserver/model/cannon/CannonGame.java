@@ -30,6 +30,7 @@ public class CannonGame extends Game implements Serializable{
 
 	// internal representation of the game state
 	// TODO: insert additional game data here
+	Board board = new Board();
 
 	
 	/************************
@@ -205,15 +206,12 @@ public class CannonGame extends Game implements Serializable{
 	
 	@Override
 	public void setBoard(String state) {
-
-		//TODO: implement
+		board.setBoard(state);
 	}
 	
 	@Override
 	public String getBoard() {
-
-		//TODO: replace with real implementation
-		return "";
+		return board.getBoard();
 	}
 	
 	@Override
