@@ -108,7 +108,16 @@ public class Board {
 	}
 	
 	private int convertChar(char c) {
-		return c == 'a'? 0 : c == 'b'? 1 : c == 'c'? 2 : c == 'd'? 3 : c == 'e'? 4 : c == 'f'? 5 : c == 'g'? 6 : c == 'h'? 7 : c == 'i'? 8 : 9;
+		if (c == 'a') return 0;
+		if (c == 'b') return 1;
+		if (c == 'c') return 2;
+		if (c == 'd') return 3;
+		if (c == 'e') return 4;
+		if (c == 'f') return 5;
+		if (c == 'g') return 6;
+		if (c == 'h') return 7;
+		if (c == 'i') return 8;
+		return 9;
 	}
 	
 	/*******************************
