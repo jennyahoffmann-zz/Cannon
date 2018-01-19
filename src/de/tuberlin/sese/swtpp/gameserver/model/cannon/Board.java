@@ -26,6 +26,8 @@ public class Board {
 	private int startRow = 0;
 	private int startColumn = 0;
 	
+	private boolean gameFinished = false;
+	
 	
 	/*******************************
 	* Board State
@@ -64,8 +66,7 @@ public class Board {
 		clearBoard();
 		for (int row = 0; row < newStateRows.length; row++) {
 			column = 0;
-			// row empty
-			if (newStateRows[row].length() == 0) {
+			if (newStateRows[row].length() == 0) { // row empty
 				for (int i = column; i <= 9; i++ ) {
 					boardState[9-row][i] = '1';
 				}
@@ -127,13 +128,65 @@ public class Board {
 	public boolean tryMove(String moveString, boolean whiteNext) {
 		this.whiteNext = whiteNext;
 		mapMoveString(moveString);
-		
 		if (!isTownPlaced()) {
 			return placeTown();
+		} else {
+			if (!mySoldier()) return false;
+			if (startRow == targetRow && (targetColumn == startColumn-1 || targetColumn == startColumn+1)) {
+				return captureSidewards();
+			}		
 		}
-		// is move valid
 		return false;
 	}
+	
+	private boolean mySoldier() {
+		if (whiteNext) return boardState[startRow][startColumn] == 'w'; 
+		return boardState[startRow][startColumn] == 'b'; 
+	}
+	
+	/*******************************
+	* Capture Sidewards
+	*******************************/
+	
+	private boolean captureSidewards() {
+		if (whiteNext && boardState[targetRow][targetColumn] == 'B') {
+			executeMove();
+			gameFinished = true;
+			return true;
+		}
+		if (whiteNext && boardState[targetRow][targetColumn] == 'b') {
+			executeMove();
+			return true;
+		}
+		if (!whiteNext && boardState[targetRow][targetColumn] == 'W') {
+			executeMove();
+			gameFinished = true;
+			return true;
+		}
+		if (!whiteNext && boardState[targetRow][targetColumn] == 'w') {
+			executeMove();
+			return true;
+		}
+		return false;
+	}
+	
+	/*******************************
+	* Execute Move/Shoot
+	*******************************/
+	
+	private void executeMove() {
+		if (whiteNext) {
+				boardState[targetRow][targetColumn] = 'w';
+		}
+		if (!whiteNext) {
+				boardState[targetRow][targetColumn] = 'b';
+		}
+		boardState[startRow][startColumn] = '1';
+	}
+	
+	/*******************************
+	* Place Town
+	*******************************/
 	
 	private boolean isTownPlaced() {
 		if (whiteNext) {
@@ -157,9 +210,14 @@ public class Board {
 		return false;
 	}
 	
+	/*******************************
+	* Normal move
+	*******************************/
+	
+	
+	
 	public boolean isGameFinished() {
-		// TODO Auto-generated method stub
-		return false;
+		return gameFinished;
 	}
 	
 
