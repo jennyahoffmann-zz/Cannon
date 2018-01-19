@@ -65,13 +65,6 @@ public class TryMoveTest {
 	 * !!!!!!!!! To be implemented !!!!!!!!!!!!
 	 *******************************************/
 	
-	/** start position towns placed
-	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
-	assertMove("d9-d9",true,true);
-	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
-	*/
-
-	
 	public void exampleTest() {
 		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7/5b4/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
 		assertMove("h6-h5",true,true);
@@ -385,19 +378,145 @@ public class TryMoveTest {
 		assertGameState("5b4/1w1w1w1w1w/1w1w1w1w1w/1w5w1w/5w4//b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3Bw5",false,true,false);
 	}
 	
+	/*******************************
+	* Move Forward
+	*******************************/
 	
+	@Test
+	public void whiteMovesTwoFieldsForward() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("d6-d4",true,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
 	
+	@Test
+	public void blackMovesTwoFieldsForward() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+	assertMove("i3-g5",false,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
 	
+	@Test
+	public void whiteMovesOneFieldForwardTwoSidewards() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("j6-h5",true,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
 	
+	@Test
+	public void blackMovesOneFieldForwardThreeSidewards() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+	assertMove("g3-d4",false,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
 	
+	@Test
+	public void whiteMoveForward() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("b6-b5",true,true);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/1w8//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
 	
+	@Test
+	public void blackMoveForward() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/1w8//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+	assertMove("a3-b4",false,true);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/1w8/1b8/2b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
 	
 	/*******************************
-	* Move Backwards (all negative)
+	* Capture Forward
+	*******************************/
+	
+	@Test
+	public void whiteMovesOnBlockedByWhite() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("b7-b6",true,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
+	
+	@Test
+	public void blackMovesOnBlockedByBlack() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w3w1w/5w4//b1b1bbb1b1/b1b1b3b1/b1b1b1b1b1/3B6",false);
+	assertMove("e2-f3",false,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w3w1w/5w4//b1b1bbb1b1/b1b1b3b1/b1b1b1b1b1/3B6",false,false,false);
+	}
+	
+	@Test
+	public void whiteCapturesBlackSoldier() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/3w6/4b5/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("d5-e4",true,true);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w//4w5/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
+	
+	@Test
+	public void blackCapturesWhiteSoldier() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w5w1w/4ww4/4b5/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+	assertMove("e4-e5",false,true);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w5w1w/4bw4//b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
+	
+	@Test
+	public void whiteCapturesBlackTown() {
+	startGame("5W4/1w1wbw1w1w/1w1w1w1w1w/1w3w1w1w///b1b3b1b1/b1b1b1b1b1/b1bwb1b1b1/3B6",true);
+	assertMove("d1-d0",true,true);
+	assertGameState("5W4/1w1wbw1w1w/1w1w1w1w1w/1w3w1w1w///b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3w6",true,true,true);
+	}
+	
+	@Test
+	public void blackCapturesWhiteTown() {
+	startGame("5W4/1w1wbw1w1w/1w1w1w1w1w/1w5w1w/5w4//b1b3b1b1/b1b1b1b1b1/b1bwb1b1b1/3B6",false);
+	assertMove("e8-f9",false,true);
+	assertGameState("5b4/1w1w1w1w1w/1w1w1w1w1w/1w5w1w/5w4//b1b3b1b1/b1b1b1b1b1/b1bwb1b1b1/3B6",false,true,false);
+	}
+	
+	
+	/** start position towns placed
+	@Test
+	public void blackSidewardsCaptureWhiteTown() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("d9-d9",true,true);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
+	*/
+	
+	/*******************************
+	* Move Backward (all negative)
+	*******************************/
+	
+	@Test
+	public void whiteMovesBackward() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("j8-j9",true,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
+	
+	@Test
+	public void blackMovesBackward() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w3w1w//5w4/b1b1bbb1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+	assertMove("f3-f0",false,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w3w1w//5w4/b1b1bbb1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
+	
+	/*******************************
+	* Capture Backward (all negative)
 	*******************************/
 	
 	/*******************************
-	* Capture Backwards (all negative)
+	* Move From Empty Field (all negative)
 	*******************************/
 	
+	@Test
+	public void whiteMovesSidewardsFromEmpty() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+	assertMove("e5-f5",true,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
+	
+	@Test
+	public void blackMovesForwardFromEmpty() {
+	startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+	assertMove("b3-b4",false,false);
+	assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	}
 }
