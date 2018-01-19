@@ -132,9 +132,23 @@ public class Board {
 			return placeTown();
 		} else {
 			if (!mySoldier()) return false;
-			if (startRow == targetRow && (targetColumn == startColumn-1 || targetColumn == startColumn+1)) return captureSidewards();
-			if (whiteNext && startRow == targetRow+1 && (Math.abs(targetColumn-startColumn)<2)) return moveForward();
-			if (!whiteNext && startRow == targetRow-1 && (Math.abs(targetColumn-startColumn)<2)) return moveForward();
+			if (startRow == targetRow && Math.abs(targetColumn-startColumn) == 1) return captureSidewards();
+			if (whiteNext && startRow == targetRow+1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
+			if (!whiteNext && startRow == targetRow-1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
+			if (whiteNext && startRow == targetRow-2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
+//			if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
+			if (!whiteNext) {
+				if (startRow == targetRow+2) {
+					if (Math.abs(targetColumn-startColumn) == 2) {
+						return retreat();
+					}
+					if (targetColumn == startColumn) {
+						return retreat();
+					}
+				}
+			}
+			
+			
 		}
 		return false;
 	}
@@ -198,6 +212,39 @@ public class Board {
 			return true;
 		}
 		return false;
+	}
+	
+	/*******************************
+	* Retreat
+	*******************************/
+	
+	private boolean retreat() {
+		if (isThreatened() && boardState[targetRow][targetColumn] == '1' && boardState[(targetRow+startRow)/2][(targetColumn+startColumn)/2] == '1') {
+			executeMove();
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isThreatened() {
+		String s = "";
+		if (startColumn > 0) s = s + boardState[startRow][startColumn-1];
+		if (startColumn < 9) s = s + boardState[startRow][startColumn+1];
+		if (whiteNext) {
+			if (startRow > 0) {
+				s = s + boardState[startRow-1][startColumn];
+				if (startColumn > 0) s = s + boardState[startRow-1][startColumn-1];
+				if (startColumn < 9) s = s + boardState[startRow-1][startColumn+1];
+			}
+			return s.contains("b");
+		} else {
+			if (startRow < 9) {
+				s = s + boardState[startRow+1][startColumn];
+				if (startColumn > 0) s = s + boardState[startRow+1][startColumn-1];
+				if (startColumn < 9) s = s + boardState[startRow+1][startColumn+1];
+			}
+			return s.contains("w");
+		}
 	}
 	
 	/*******************************
