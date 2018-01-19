@@ -132,9 +132,9 @@ public class Board {
 			return placeTown();
 		} else {
 			if (!mySoldier()) return false;
-			if (startRow == targetRow && (targetColumn == startColumn-1 || targetColumn == startColumn+1)) {
-				return captureSidewards();
-			}		
+			if (startRow == targetRow && (targetColumn == startColumn-1 || targetColumn == startColumn+1)) return captureSidewards();
+			if (whiteNext && startRow == targetRow+1 && (Math.abs(targetColumn-startColumn)<2)) return moveForward();
+			if (!whiteNext && startRow == targetRow-1 && (Math.abs(targetColumn-startColumn)<2)) return moveForward();
 		}
 		return false;
 	}
@@ -165,6 +165,36 @@ public class Board {
 		}
 		if (!whiteNext && boardState[targetRow][targetColumn] == 'w') {
 			executeMove();
+			return true;
+		}
+		return false;
+	}
+	
+	/*******************************
+	* Move/Capture Forward
+	*******************************/
+	
+	private boolean moveForward() {
+		if (boardState[targetRow][targetColumn] == '1') {
+			executeMove();
+			return true;
+		}
+		if (whiteNext && boardState[targetRow][targetColumn] == 'b') {
+			executeMove();
+			return true;
+		}
+		if (whiteNext && boardState[targetRow][targetColumn] == 'B') {
+			executeMove();
+			gameFinished = true;
+			return true;
+		}
+		if (!whiteNext && boardState[targetRow][targetColumn] == 'w') {
+			executeMove();
+			return true;
+		}
+		if (!whiteNext && boardState[targetRow][targetColumn] == 'W') {
+			executeMove();
+			gameFinished = true;
 			return true;
 		}
 		return false;
@@ -211,10 +241,8 @@ public class Board {
 	}
 	
 	/*******************************
-	* Normal move
+	* Is Game Finished?
 	*******************************/
-	
-	
 	
 	public boolean isGameFinished() {
 		return gameFinished;
