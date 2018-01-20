@@ -1,5 +1,7 @@
 package de.tuberlin.sese.swtpp.gameserver.model.cannon;
 
+import java.util.Arrays;
+
 public class Board {
 	//						A   B   C   D   E   F   G   H   I   J
 	private char[] row9 = {'1','1','1','1','1','1','1','1','1','1'};
@@ -136,6 +138,9 @@ public class Board {
 		if (!whiteNext && startRow == targetRow-1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
 		if (whiteNext && startRow == targetRow-2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
 		if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
+		if (Math.abs(targetColumn-startColumn) == 4 || Math.abs(targetColumn-startColumn) == 5) return gunshot();
+		if (Math.abs(targetRow-startRow) == 4 || Math.abs(targetRow-startRow) == 5) return gunshot();
+		if (Math.abs(targetRow-startRow) == 3 || Math.abs(targetColumn-startColumn) == 3) moveCannon();
 		return false;
 	}
 	
@@ -182,6 +187,35 @@ public class Board {
 			return boardState[row][column] == 'b';
 		}
 		return boardState[row][column] == 'w';
+	}
+	
+	/*******************************
+	* Gunshot
+	*******************************/
+	
+	private boolean gunshot() {
+		int[] row = {targetRow, targetRow, targetRow, targetRow};
+		int[] column = {targetColumn, targetColumn, targetColumn, targetColumn};
+		if (targetRow > startRow) for (int i = 0; i < row.length; i++) row[i] = startRow + i;
+		if (targetRow < startRow) for (int i = 0; i < row.length; i++) row[i] = startRow - i;
+		if (targetColumn > startColumn) for (int i = 0; i < row.length; i++) column[i] = startColumn + i;
+		if (targetColumn < startColumn) for (int i = 0; i < row.length; i++) column[i] = startColumn - i;
+		if (isCannon(Arrays.copyOfRange(row, 0, 3), Arrays.copyOfRange(column, 0, 3)) && isFieldFree(row[3], column[3])) {
+			if (isTargetOwnedByOpponent()) {
+				executeShot();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isCannon(int[] row, int[] column) {
+		char color = whiteNext ? 'w' : 'b';
+		boolean isCannon = true;
+		for (int i = 0; i < row.length; i++) {
+					isCannon &= boardState[row[i]][column[i]] == color;
+		}
+		return isCannon;
 	}
 	
 	/*******************************
@@ -252,6 +286,13 @@ public class Board {
 				boardState[targetRow][targetColumn] = 'b';
 		}
 		boardState[startRow][startColumn] = '1';
+	}
+	
+	private void executeShot() {
+		if (isTargetTownOfOpponent()) {
+			gameFinished = true;
+		}
+		boardState[targetRow][targetColumn] = '1';
 	}
 	
 	/*******************************
