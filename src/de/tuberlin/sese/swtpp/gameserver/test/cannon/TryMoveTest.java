@@ -743,20 +743,20 @@ public class TryMoveTest {
 	* Capture Backward (all negative)
 	*******************************/
 	
-	// w schlägt b gerade
-	// b schlägt w schräg
-	// w schlägt B schräg
-	// b schlägt W gerade
-	
-	/** start position towns placed
 	@Test
-	public void blackSidewaysCaptureWhiteTown() {
-		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
-		assertMove("d9-d9",true,true);
-		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+	public void blackCapturesSoldierBackward() {
+		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/2b7/1w8/b3b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
+		assertMove("c5-b4",false,false);
+		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/2b7/1w8/b3b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
 	}
-	*/
 	
+	@Test
+	public void whiteCapturesSoldierBackward() {
+		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/2b7/2w7/b3b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+		assertMove("c4-c5",true,false);
+		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w/2b7/2w7/b3b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+	}
+
 	/*******************************
 	* Move From Empty Field (all negative)
 	*******************************/
