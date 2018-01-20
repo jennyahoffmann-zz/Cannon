@@ -216,7 +216,6 @@ public class CannonGame extends Game implements Serializable{
 	
 	@Override
 	public boolean tryMove(String moveString, Player player) {
-		//TODO: implement
 		if (isItMyTurn(player) && board.tryMove(moveString, isWhiteNext())) {
 			if (board.isGameFinished()) return finish(isItMyTurn(whitePlayer)? whitePlayer : blackPlayer);
 			updateNext();

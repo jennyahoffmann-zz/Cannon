@@ -128,56 +128,68 @@ public class Board {
 	public boolean tryMove(String moveString, boolean whiteNext) {
 		this.whiteNext = whiteNext;
 		mapMoveString(moveString);
-		if (!isTownPlaced()) {
-			return placeTown();
-		} else {
-			if (!mySoldier()) return false;
-			if (startRow == targetRow && Math.abs(targetColumn-startColumn) == 1) return captureSidewards();
-			if (whiteNext && startRow == targetRow+1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
-			if (!whiteNext && startRow == targetRow-1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
-			if (whiteNext && startRow == targetRow-2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
-//			if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
-			if (!whiteNext) {
-				if (startRow == targetRow+2) {
-					if (Math.abs(targetColumn-startColumn) == 2) {
-						return retreat();
-					}
-					if (targetColumn == startColumn) {
-						return retreat();
-					}
-				}
-			}
-			
-			
-		}
+		if (!isTownPlaced()) return placeTown();
+		if (!mySoldier()) return false;
+		if (isTargetOwnedByMyself()) return false;
+		if (startRow == targetRow && Math.abs(targetColumn-startColumn) == 1) return captureSideways();
+		if (whiteNext && startRow == targetRow+1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
+		if (!whiteNext && startRow == targetRow-1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
+		if (whiteNext && startRow == targetRow-2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
+		if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
 		return false;
 	}
+	
+	/*******************************
+	* Field Analysis
+	*******************************/
 	
 	private boolean mySoldier() {
 		if (whiteNext) return boardState[startRow][startColumn] == 'w'; 
 		return boardState[startRow][startColumn] == 'b'; 
 	}
 	
+	private boolean isFieldFree(int row, int column) {
+		return boardState[row][column] == '1';
+	}
+		
+	private boolean isTargetTownOfOpponent() {
+		if (whiteNext) {
+			return boardState[targetRow][targetColumn] == 'B';
+		}
+		return boardState[targetRow][targetColumn] == 'W';
+	}
+	
+	private boolean isTargetOwnedByOpponent() {
+		if (whiteNext) {
+			return boardState[targetRow][targetColumn] == 'b' || boardState[targetRow][targetColumn] == 'B';
+		}
+		return boardState[targetRow][targetColumn] == 'w' || boardState[targetRow][targetColumn] == 'W';
+	}
+	
+	private boolean isTargetOwnedByMyself() {
+		if (whiteNext) {
+			return boardState[targetRow][targetColumn] == 'w' || boardState[targetRow][targetColumn] == 'W';
+		}
+		return boardState[targetRow][targetColumn] == 'b' || boardState[targetRow][targetColumn] == 'B';
+	}
+	
+	private boolean isTargetFree() {
+		return boardState[targetRow][targetColumn] == '1';
+	}
+	
+	private boolean isFieldSoldierOfOpponent(int row, int column) {
+		if (whiteNext) {
+			return boardState[row][column] == 'b';
+		}
+		return boardState[row][column] == 'w';
+	}
+	
 	/*******************************
-	* Capture Sidewards
+	* Capture Sideways
 	*******************************/
 	
-	private boolean captureSidewards() {
-		if (whiteNext && boardState[targetRow][targetColumn] == 'B') {
-			executeMove();
-			gameFinished = true;
-			return true;
-		}
-		if (whiteNext && boardState[targetRow][targetColumn] == 'b') {
-			executeMove();
-			return true;
-		}
-		if (!whiteNext && boardState[targetRow][targetColumn] == 'W') {
-			executeMove();
-			gameFinished = true;
-			return true;
-		}
-		if (!whiteNext && boardState[targetRow][targetColumn] == 'w') {
+	private boolean captureSideways() {
+		if (isTargetOwnedByOpponent()) {
 			executeMove();
 			return true;
 		}
@@ -189,29 +201,8 @@ public class Board {
 	*******************************/
 	
 	private boolean moveForward() {
-		if (boardState[targetRow][targetColumn] == '1') {
-			executeMove();
-			return true;
-		}
-		if (whiteNext && boardState[targetRow][targetColumn] == 'b') {
-			executeMove();
-			return true;
-		}
-		if (whiteNext && boardState[targetRow][targetColumn] == 'B') {
-			executeMove();
-			gameFinished = true;
-			return true;
-		}
-		if (!whiteNext && boardState[targetRow][targetColumn] == 'w') {
-			executeMove();
-			return true;
-		}
-		if (!whiteNext && boardState[targetRow][targetColumn] == 'W') {
-			executeMove();
-			gameFinished = true;
-			return true;
-		}
-		return false;
+		executeMove();
+		return true;
 	}
 	
 	/*******************************
@@ -219,32 +210,31 @@ public class Board {
 	*******************************/
 	
 	private boolean retreat() {
-		if (isThreatened() && boardState[targetRow][targetColumn] == '1' && boardState[(targetRow+startRow)/2][(targetColumn+startColumn)/2] == '1') {
-			executeMove();
-			return true;
+		if (isThreatened() && isTargetFree() && isFieldFree((targetRow+startRow)/2,(targetColumn+startColumn)/2)) {
+					executeMove();
+					return true;		
 		}
 		return false;
 	}
 	
 	private boolean isThreatened() {
-		String s = "";
-		if (startColumn > 0) s = s + boardState[startRow][startColumn-1];
-		if (startColumn < 9) s = s + boardState[startRow][startColumn+1];
+		boolean isThreatend = false;
+		if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow, startColumn-1);
+		if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow, startColumn+1);
 		if (whiteNext) {
 			if (startRow > 0) {
-				s = s + boardState[startRow-1][startColumn];
-				if (startColumn > 0) s = s + boardState[startRow-1][startColumn-1];
-				if (startColumn < 9) s = s + boardState[startRow-1][startColumn+1];
+				isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn);
+				if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn-1);
+				if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn+1);
 			}
-			return s.contains("b");
 		} else {
 			if (startRow < 9) {
-				s = s + boardState[startRow+1][startColumn];
-				if (startColumn > 0) s = s + boardState[startRow+1][startColumn-1];
-				if (startColumn < 9) s = s + boardState[startRow+1][startColumn+1];
+				isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn);
+				if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn-1);
+				if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn+1);
 			}
-			return s.contains("w");
 		}
+		return isThreatend;
 	}
 	
 	/*******************************
@@ -252,6 +242,9 @@ public class Board {
 	*******************************/
 	
 	private void executeMove() {
+		if (isTargetTownOfOpponent()) {
+			gameFinished = true;
+		}
 		if (whiteNext) {
 				boardState[targetRow][targetColumn] = 'w';
 		}
