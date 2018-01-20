@@ -140,6 +140,7 @@ public class Board {
 		if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
 		if (Math.abs(targetColumn-startColumn) == 4 || Math.abs(targetColumn-startColumn) == 5) return gunshot();
 		if (Math.abs(targetRow-startRow) == 4 || Math.abs(targetRow-startRow) == 5) return gunshot();
+		if (Math.abs(targetRow-startRow) == 3 || Math.abs(targetColumn-startColumn) == 3) return moveCannon();
 		return false;
 	}
 	
@@ -189,6 +190,20 @@ public class Board {
 	}
 	
 	/*******************************
+	* Move Cannon
+	*******************************/
+	
+	private boolean moveCannon() {
+		int[] row = getToBeExaminedRows(3);
+		int[] column = getToBeExaminedColumns(3);
+		if (isCannon(row, column) && isTargetFree()) {
+			executeMove();
+			return true;
+		}
+		return false;
+	}
+	
+	/*******************************
 	* Gunshot
 	*******************************/
 	
@@ -205,6 +220,7 @@ public class Board {
 	}
 	
 	private boolean isCannon(int[] row, int[] column) {
+		if (!(Math.abs(targetRow-startRow) == Math.abs(targetColumn-startColumn) || targetRow-startRow == 0 || targetColumn-startColumn == 0)) return false;
 		char color = whiteNext ? 'w' : 'b';
 		boolean isCannon = true;
 		for (int i = 0; i < row.length; i++) {
@@ -222,11 +238,11 @@ public class Board {
 	}
 	
 	private int[] getToBeExaminedColumns(int length) {
-		int[] row = new int[length];
-		for (int i = 0; i < length; i++) row[i] = startColumn;
-		if (targetColumn > startColumn) for (int i = 0; i < length; i++) row[i] = startColumn + i;
-		if (targetColumn < startColumn) for (int i = 0; i < length; i++) row[i] = startColumn - i;
-		return row;
+		int[] column = new int[length];
+		for (int i = 0; i < length; i++) column[i] = startColumn;
+		if (targetColumn > startColumn) for (int i = 0; i < length; i++) column[i] = startColumn + i;
+		if (targetColumn < startColumn) for (int i = 0; i < length; i++) column[i] = startColumn - i;
+		return column;
 	}
 	
 	/*******************************
@@ -339,6 +355,4 @@ public class Board {
 	public boolean isGameFinished() {
 		return gameFinished;
 	}
-	
-
 }
