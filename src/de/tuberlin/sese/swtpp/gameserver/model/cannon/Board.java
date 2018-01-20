@@ -140,7 +140,6 @@ public class Board {
 		if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
 		if (Math.abs(targetColumn-startColumn) == 4 || Math.abs(targetColumn-startColumn) == 5) return gunshot();
 		if (Math.abs(targetRow-startRow) == 4 || Math.abs(targetRow-startRow) == 5) return gunshot();
-		if (Math.abs(targetRow-startRow) == 3 || Math.abs(targetColumn-startColumn) == 3) moveCannon();
 		return false;
 	}
 	
@@ -194,12 +193,8 @@ public class Board {
 	*******************************/
 	
 	private boolean gunshot() {
-		int[] row = {targetRow, targetRow, targetRow, targetRow};
-		int[] column = {targetColumn, targetColumn, targetColumn, targetColumn};
-		if (targetRow > startRow) for (int i = 0; i < row.length; i++) row[i] = startRow + i;
-		if (targetRow < startRow) for (int i = 0; i < row.length; i++) row[i] = startRow - i;
-		if (targetColumn > startColumn) for (int i = 0; i < row.length; i++) column[i] = startColumn + i;
-		if (targetColumn < startColumn) for (int i = 0; i < row.length; i++) column[i] = startColumn - i;
+		int[] row = getToBeExaminedRows(4);
+		int[] column = getToBeExaminedColumns(4);
 		if (isCannon(Arrays.copyOfRange(row, 0, 3), Arrays.copyOfRange(column, 0, 3)) && isFieldFree(row[3], column[3])) {
 			if (isTargetOwnedByOpponent()) {
 				executeShot();
@@ -216,6 +211,22 @@ public class Board {
 					isCannon &= boardState[row[i]][column[i]] == color;
 		}
 		return isCannon;
+	}
+	
+	private int[] getToBeExaminedRows(int length) {
+		int[] row = new int[length];
+		for (int i = 0; i < length; i++) row[i] = startRow;
+		if (targetRow > startRow) for (int i = 0; i < length; i++) row[i] = startRow + i;
+		if (targetRow < startRow) for (int i = 0; i < length; i++) row[i] = startRow - i;
+		return row;
+	}
+	
+	private int[] getToBeExaminedColumns(int length) {
+		int[] row = new int[length];
+		for (int i = 0; i < length; i++) row[i] = startColumn;
+		if (targetColumn > startColumn) for (int i = 0; i < length; i++) row[i] = startColumn + i;
+		if (targetColumn < startColumn) for (int i = 0; i < length; i++) row[i] = startColumn - i;
+		return row;
 	}
 	
 	/*******************************
