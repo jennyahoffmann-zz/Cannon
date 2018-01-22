@@ -1,5 +1,6 @@
 package de.tuberlin.sese.swtpp.gameserver.model.cannon;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
@@ -189,6 +190,20 @@ public class Board {
 		return boardState[row][column] == 'w';
 	}
 	
+	private boolean isFieldOwnedByMyself(int row, int column) {
+		if (whiteNext) {
+			return boardState[row][column] == 'w' || boardState[row][column] == 'W';
+		}
+		return boardState[row][column] == 'b' || boardState[row][column] == 'B';
+	}
+	
+	private boolean isFieldOwnedByMyselfOrFree(int row, int column) {
+		if (whiteNext) {
+			return boardState[row][column] == 'w' || boardState[row][column] == 'W' || boardState[row][column] == '1';
+		}
+		return boardState[row][column] == 'b' || boardState[row][column] == 'B' || boardState[row][column] == '1';
+	}
+	
 	/*******************************
 	* Move Cannon
 	*******************************/
@@ -353,6 +368,71 @@ public class Board {
 	*******************************/
 	
 	public boolean isGameFinished() {
-		return gameFinished;
+		return gameFinished |= isStalemate();
+	}
+	
+	private boolean isStalemate() {
+		ArrayList<Position> positionsOfOpponentSoldiers = getPostionsOfOpponentSoldier();
+		for (Position pos : positionsOfOpponentSoldiers) {
+			if (canOpponentMove(pos.getRow(), pos.getColumn())) return false;
+		}
+		if (opponentHasHorizontalCannon()) return false;
+		return true;
+	}
+	
+	private boolean opponentHasHorizontalCannon() {
+		int count;
+		for (int i = 0; i <= 9; i++) {
+			count = 0;
+			for (int j = 0; j <= 9; j++) {
+				if (isFieldSoldierOfOpponent(i, j)) {
+					count++;
+				} else {
+					count = 0;
+				}
+				if (count >= 3) return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean canOpponentMove(int row,int column) {
+		boolean canCapture = false;
+		if (column > 0) canCapture |= isFieldOwnedByMyself(row, column-1);
+		if (column < 9) canCapture |= isFieldOwnedByMyself(row, column+1);
+		if (whiteNext) {
+			if (row < 9) {
+				canCapture |= isFieldOwnedByMyself(row+1, column);
+				if (column > 0) {
+					canCapture |= isFieldOwnedByMyselfOrFree(row+1, column-1);
+				}
+				if (column < 9) {
+					canCapture |= isFieldOwnedByMyselfOrFree(row+1, column+1);
+				}
+			}
+		} else {
+			if (row > 0) {
+				canCapture |= isFieldOwnedByMyself(row-1, column);
+				if (column > 0) {
+					canCapture |= isFieldOwnedByMyselfOrFree(row-1, column-1);
+				}
+				if (column < 9) {
+					canCapture |= isFieldOwnedByMyselfOrFree(row-1, column+1);
+				}
+			}
+		}
+		return canCapture;
+	} 
+		
+	private ArrayList<Position> getPostionsOfOpponentSoldier() {
+		ArrayList<Position> positionsOfSoldiers = new ArrayList<Position>();
+		for (int row = 0; row <= 9; row++) {
+			for (int column = 0; column <= 9; column++) {
+				if (isFieldSoldierOfOpponent(row, column)) {
+					positionsOfSoldiers.add(new Position(row, column));
+				};
+			}
+		}
+		return positionsOfSoldiers;
 	}
 }
