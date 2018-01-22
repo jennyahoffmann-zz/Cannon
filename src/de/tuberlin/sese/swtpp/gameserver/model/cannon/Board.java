@@ -386,22 +386,14 @@ public class Board {
 		if (whiteNext) {
 			if (row < 9) {
 				canCapture |= isFieldOwnedByMyselfOrFree(row+1, column);
-				if (column > 0) {
-					canCapture |= isFieldOwnedByMyselfOrFree(row+1, column-1);
-				}
-				if (column < 9) {
-					canCapture |= isFieldOwnedByMyselfOrFree(row+1, column+1);
-				}
+				if (column > 0) canCapture |= isFieldOwnedByMyselfOrFree(row+1, column-1);
+				if (column < 9) canCapture |= isFieldOwnedByMyselfOrFree(row+1, column+1);
 			}
 		} else {
 			if (row > 0) {
 				canCapture |= isFieldOwnedByMyselfOrFree(row-1, column);
-				if (column > 0) {
-					canCapture |= isFieldOwnedByMyselfOrFree(row-1, column-1);
-				}
-				if (column < 9) {
-					canCapture |= isFieldOwnedByMyselfOrFree(row-1, column+1);
-				}
+				if (column > 0) canCapture |= isFieldOwnedByMyselfOrFree(row-1, column-1);
+				if (column < 9) canCapture |= isFieldOwnedByMyselfOrFree(row-1, column+1);
 			}
 		}
 		return canCapture;
