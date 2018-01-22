@@ -89,6 +89,12 @@ public class TryMoveTest {
 		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w3w1w1w/2w7/5b4/b1b3b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true, false, false);
 	}
 	
+	@Test
+	public void emptyBoard() {
+		startGame("/////////",true);
+		assertGameState("/////////",true, false, false);
+	}
+	
 	/*******************************
 	* Players Turn (all negative)
 	*******************************/

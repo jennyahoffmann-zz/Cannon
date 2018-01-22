@@ -69,22 +69,16 @@ public class Board {
 		clearBoard();
 		for (int row = 0; row < newStateRows.length; row++) {
 			column = 0;
-			if (newStateRows[row].length() == 0) { // row empty
-				for (int i = column; i <= 9; i++ ) {
-					boardState[9-row][i] = '1';
-				}
-			} else {
-				newStateRowChars = newStateRows[row].toCharArray();
-				for (char c : newStateRowChars) {
-					if (c == 'b' || c == 'B' || c == 'w' || c == 'W' ) {
-						if(c == 'B') blackTownPlaced = true;
-						if(c == 'W') whiteTownPlaced = true;
+			newStateRowChars = newStateRows[row].toCharArray();
+			for (char c : newStateRowChars) {
+				if (c == 'b' || c == 'B' || c == 'w' || c == 'W' ) {
+					if(c == 'B') blackTownPlaced = true;
+					if(c == 'W') whiteTownPlaced = true;
 						boardState[9-row][column] = c;
 						column++;
-					} else {
-						for (int i = column; column < i+Character.getNumericValue(c); column++) {
-							boardState[9-row][column] = '1';
-						}
+				} else {
+					for (int i = column; column < i+Character.getNumericValue(c); column++) {
+						boardState[9-row][column] = '1';
 					}
 				}
 			}
@@ -112,16 +106,8 @@ public class Board {
 	}
 	
 	private int convertChar(char c) {
-		if (c == 'a') return 0;
-		if (c == 'b') return 1;
-		if (c == 'c') return 2;
-		if (c == 'd') return 3;
-		if (c == 'e') return 4;
-		if (c == 'f') return 5;
-		if (c == 'g') return 6;
-		if (c == 'h') return 7;
-		if (c == 'i') return 8;
-		return 9;
+		String s = "abcdefghij";
+		return s.indexOf(c);
 	}
 	
 	/*******************************
@@ -236,7 +222,7 @@ public class Board {
 		char color = whiteNext ? 'w' : 'b';
 		boolean isCannon = true;
 		for (int i = 0; i < row.length; i++) {
-					isCannon &= boardState[row[i]][column[i]] == color;
+			isCannon &= boardState[row[i]][column[i]] == color;
 		}
 		return isCannon;
 	}
@@ -244,16 +230,16 @@ public class Board {
 	private int[] getToBeExaminedRows(int length) {
 		int[] row = new int[length];
 		for (int i = 0; i < length; i++) row[i] = startRow;
-		if (targetRow > startRow) for (int i = 0; i < length; i++) row[i] = startRow + i;
-		if (targetRow < startRow) for (int i = 0; i < length; i++) row[i] = startRow - i;
+			if (targetRow > startRow) for (int i = 0; i < length; i++) row[i] = startRow + i;
+			if (targetRow < startRow) for (int i = 0; i < length; i++) row[i] = startRow - i;
 		return row;
 	}
 	
 	private int[] getToBeExaminedColumns(int length) {
 		int[] column = new int[length];
 		for (int i = 0; i < length; i++) column[i] = startColumn;
-		if (targetColumn > startColumn) for (int i = 0; i < length; i++) column[i] = startColumn + i;
-		if (targetColumn < startColumn) for (int i = 0; i < length; i++) column[i] = startColumn - i;
+			if (targetColumn > startColumn) for (int i = 0; i < length; i++) column[i] = startColumn + i;
+			if (targetColumn < startColumn) for (int i = 0; i < length; i++) column[i] = startColumn - i;
 		return column;
 	}
 	
@@ -284,8 +270,8 @@ public class Board {
 	
 	private boolean retreat() {
 		if (isThreatened() && isTargetFree() && isFieldFree((targetRow+startRow)/2,(targetColumn+startColumn)/2)) {
-					executeMove();
-					return true;		
+			executeMove();
+			return true;		
 		}
 		return false;
 	}
@@ -319,10 +305,10 @@ public class Board {
 			gameFinished = true;
 		}
 		if (whiteNext) {
-				boardState[targetRow][targetColumn] = 'w';
+			boardState[targetRow][targetColumn] = 'w';
 		}
 		if (!whiteNext) {
-				boardState[targetRow][targetColumn] = 'b';
+			boardState[targetRow][targetColumn] = 'b';
 		}
 		boardState[startRow][startColumn] = '1';
 	}
