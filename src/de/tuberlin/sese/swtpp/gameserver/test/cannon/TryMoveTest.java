@@ -774,4 +774,64 @@ public class TryMoveTest {
 		assertMove("b3-b4",false,false);
 		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
 	}
+	
+	/*******************************
+	* Finish Game
+	*******************************/
+	
+	@Test
+	public void whiteCapturesLastBlackSoldier() {
+		startGame("5W4////w9/b9////3B6",true);
+		assertMove("a5-a4",true,true);
+		assertGameState("5W4/////w9////3B6",true,true,true);
+	}
+	
+	@Test
+	public void balckCapturesLastWhiteSoldier() {
+		startGame("5W4////9w/9b////3B6",false);
+		assertMove("j4,j5",false,true);
+		assertGameState("5W4////9b/////3B6",false,true,false);
+	}
+	
+	@Test
+	public void blackCannonInLastRow() {
+		startGame("bbb2W4/9w////////3B6",true);
+		assertMove("j8-j7",true,true);
+		assertGameState("bbb2W4//9w///////3B6",false,false,false);
+	}
+	
+	@Test
+	public void whiteCannonInLastRow() {
+		startGame("5W4//b9///////3B3www",false);
+		assertMove("a7-a8",false,true);
+		assertGameState("5W4/b9////////3B3www",true,false,false);
+	}
+	
+	@Test
+	public void stalemateBlack() {
+		startGame("5W3b/w9/b9///////3B3www",true);
+		assertMove("a8-a7",true,true);
+		assertGameState("5W3b//w9///////3B3www",true,true,true);
+	}
+	
+	@Test
+	public void stalemateWhite() {
+		startGame("5W3b/w9/b9///////3B4w1",false);
+		assertMove("a7-a8",false,true);
+		assertGameState("5W3b/b9////////3B4w1",false,true,false);
+	}
+	
+	@Test
+	public void whiteStalematesBlack() {
+		startGame("bb3W2bb/b8b///4w5/4b5///w8w/ww1B4ww",true);
+		assertMove("e5-e4",true,true);
+		assertGameState("bb3W2bb/b8b////4w5///w8w/ww1B4ww",true,true,true);
+	}
+	
+	@Test
+	public void blackStalematesWhite() {
+		startGame("bb3W2bb/b8b///4w5/4b5///w8w/ww1B4ww",false);
+		assertMove("e4-e5",false,true);
+		assertGameState("bb3W2bb/b8b///4b5////w8w/ww1B4ww",false,true,false);
+	}
 }
