@@ -834,4 +834,18 @@ public class TryMoveTest {
 		assertMove("e4-e5",false,true);
 		assertGameState("bb3W2bb/b8b///4b5////w8w/ww1B4ww",false,true,false);
 	}
+	
+	@Test
+	public void blackCanStillCaptureWhiteSoldier() {
+		startGame("5W4////w9/b9/b9///3B6",true);
+		assertMove("a5-a4",true,true);
+		assertGameState("5W4/////w9/b9///3B6",false,false,false);
+	}
+	
+	@Test
+	public void blackCanStillCaptureWhiteTown() {
+		startGame("5W4/5b4///w9/b9////3B6",true);
+		assertMove("a5-a4",true,true);
+		assertGameState("5W4/5b4////w9////3B6",false,false,false);
+	}
 }

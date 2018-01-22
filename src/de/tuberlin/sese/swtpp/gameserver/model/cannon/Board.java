@@ -198,12 +198,16 @@ public class Board {
 	}
 	
 	private boolean isFieldOwnedByMyselfOrFree(int row, int column) {
-		if (whiteNext) {
-			return boardState[row][column] == 'w' || boardState[row][column] == 'W' || boardState[row][column] == '1';
+		if(isFieldOwnedByMyself(row, column)) {
+			return true;
 		}
-		return boardState[row][column] == 'b' || boardState[row][column] == 'B' || boardState[row][column] == '1';
+		if (isFieldFree(row, column)) {
+			return true;
+		}
+		return false;
+		//return isFieldOwnedByMyself(row, column) || isFieldFree(row, column);
 	}
-	
+			
 	/*******************************
 	* Move Cannon
 	*******************************/
