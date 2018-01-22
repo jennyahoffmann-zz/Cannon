@@ -198,14 +198,7 @@ public class Board {
 	}
 	
 	private boolean isFieldOwnedByMyselfOrFree(int row, int column) {
-		if(isFieldOwnedByMyself(row, column)) {
-			return true;
-		}
-		if (isFieldFree(row, column)) {
-			return true;
-		}
-		return false;
-		//return isFieldOwnedByMyself(row, column) || isFieldFree(row, column);
+		return isFieldOwnedByMyself(row, column) || isFieldFree(row, column);
 	}
 			
 	/*******************************
@@ -406,7 +399,7 @@ public class Board {
 		if (column < 9) canCapture |= isFieldOwnedByMyself(row, column+1);
 		if (whiteNext) {
 			if (row < 9) {
-				canCapture |= isFieldOwnedByMyself(row+1, column);
+				canCapture |= isFieldOwnedByMyselfOrFree(row+1, column);
 				if (column > 0) {
 					canCapture |= isFieldOwnedByMyselfOrFree(row+1, column-1);
 				}
@@ -416,7 +409,7 @@ public class Board {
 			}
 		} else {
 			if (row > 0) {
-				canCapture |= isFieldOwnedByMyself(row-1, column);
+				canCapture |= isFieldOwnedByMyselfOrFree(row-1, column);
 				if (column > 0) {
 					canCapture |= isFieldOwnedByMyselfOrFree(row-1, column-1);
 				}
