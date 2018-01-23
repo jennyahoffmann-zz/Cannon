@@ -120,15 +120,35 @@ public class Board {
 		if (!isTownPlaced()) return placeTown();
 		if (!mySoldier()) return false;
 		if (isTargetOwnedByMyself()) return false;
-		if (startRow == targetRow && Math.abs(targetColumn-startColumn) == 1) return captureSideways();
-		if (whiteNext && startRow == targetRow+1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
-		if (!whiteNext && startRow == targetRow-1 && Math.abs(targetColumn-startColumn) < 2) return moveForward();
-		if (whiteNext && startRow == targetRow-2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
-		if (!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) return retreat();
-		if (Math.abs(targetColumn-startColumn) == 4 || Math.abs(targetColumn-startColumn) == 5) return gunshot();
-		if (Math.abs(targetRow-startRow) == 4 || Math.abs(targetRow-startRow) == 5) return gunshot();
-		if (Math.abs(targetRow-startRow) == 3 || Math.abs(targetColumn-startColumn) == 3) return moveCannon();
+		if (tryToCaptureSideways()) return captureSideways();
+		if (tryToMoveForward()) return moveForward();
+		if (tryToRetreat()) return retreat();
+		if (tryGunshot()) return gunshot();
+		if (tryToMoveCannon()) return moveCannon();
 		return false;
+	}
+	
+	private boolean tryToCaptureSideways() {
+		return startRow == targetRow && Math.abs(targetColumn-startColumn) == 1;
+	}
+	
+	private boolean tryToMoveForward() {
+		return (whiteNext && startRow == targetRow+1 && Math.abs(targetColumn-startColumn) < 2) || 
+				(!whiteNext && startRow == targetRow-1 && Math.abs(targetColumn-startColumn) < 2);
+	}
+	
+	private boolean tryToRetreat() {
+		return (whiteNext && startRow == targetRow-2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn)) ||
+				(!whiteNext && startRow == targetRow+2 && (Math.abs(targetColumn-startColumn) == 2 || targetColumn == startColumn));
+	}
+	
+	private boolean tryGunshot() {
+		return (Math.abs(targetColumn-startColumn) == 4 || Math.abs(targetColumn-startColumn) == 5) ||
+				(Math.abs(targetRow-startRow) == 4 || Math.abs(targetRow-startRow) == 5);
+	}
+	
+	private boolean tryToMoveCannon() {
+		return Math.abs(targetRow-startRow) == 3 || Math.abs(targetColumn-startColumn) == 3;
 	}
 	
 	/*******************************
