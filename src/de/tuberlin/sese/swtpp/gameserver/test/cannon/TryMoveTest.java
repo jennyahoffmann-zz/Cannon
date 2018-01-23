@@ -489,10 +489,17 @@ public class TryMoveTest {
 	}
 
 	@Test
-	public void whiteRetreatsNotThreatend2() {
-		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B1w4",true);
-		assertMove("f0-f2",true,false);
-		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B1w4",true,false,false);
+	public void whiteRetreatsJumpsOverOffender() {
+		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b3b1/3B1w4",true);
+		assertMove("f0-d2",true,false);
+		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b3b1/3B1w4",true,false,false);
+	}
+	
+	@Test
+	public void whiteRetreatsThreatendFromBackDiagionally() {
+		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b3b1/3B1w4",true);
+		assertMove("f0-f2",true,true);
+		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w///b1b1b1b1b1/b1b1bwb1b1/b1b1b3b1/3B6",false,false,false);
 	}
 
 	@Test
@@ -503,10 +510,10 @@ public class TryMoveTest {
 	}
 	
 	@Test
-	public void blackRetreatsNotThreatend2() {
+	public void blackRetreatsThreatendFromBack() {
 		startGame("4bW4/1w3w1w1w/1w1w1w1w1w/1w1w1w1w1w/3w6//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false);
-		assertMove("e9-c7",false,false);
-		assertGameState("4bW4/1w3w1w1w/1w1w1w1w1w/1w1w1w1w1w/3w6//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+		assertMove("e9-c7",false,true);
+		assertGameState("5W4/1w3w1w1w/1wbw1w1w1w/1w1w1w1w1w/3w6//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
 	}
 
 	@Test
@@ -570,6 +577,20 @@ public class TryMoveTest {
 		startGame("5W4/1w1w1w1w1w/1w1w1w1w1w/3w1w1w1w//w9/b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
 		assertMove("a4-a6",true,true);
 		assertGameState("5W4/1w1w1w1w1w/1w1w1w1w1w/w2w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",false,false,false);
+		}
+	
+	@Test
+	public void whiteRetreatsForward() {
+		startGame("5W4/1w3w1w1w/1wbw1w1w1w/1w1w1w1w1w/3w6//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+		assertMove("b6-d4",true,false);
+		assertGameState("5W4/1w3w1w1w/1wbw1w1w1w/1w1w1w1w1w/3w6//b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
+		}
+	
+	@Test
+	public void whiteRetreatsSideways() {
+		startGame("5W4/1w3w1w1w/1wbw1w1w1w/1w1w1w1w1w/3w6/2b7/b3b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true);
+		assertMove("d5-f5",true,false);
+		assertGameState("5W4/1w3w1w1w/1wbw1w1w1w/1w1w1w1w1w/3w6/2b7/b3b1b1b1/b1b1b1b1b1/b1b1b1b1b1/3B6",true,false,false);
 		}
 	
 	/*******************************

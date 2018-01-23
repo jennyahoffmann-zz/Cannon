@@ -300,18 +300,15 @@ public class Board {
 		boolean isThreatend = false;
 		if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow, startColumn-1);
 		if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow, startColumn+1);
-		if (whiteNext) {
-			if (startRow > 0) {
-				isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn);
-				if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn-1);
-				if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn+1);
-			}
-		} else {
-			if (startRow < 9) {
-				isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn);
-				if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn-1);
-				if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn+1);
-			}
+		if (startRow > 0) {
+			isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn);
+			if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn-1);
+			if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow-1, startColumn+1);
+		}
+		if (startRow < 9) {
+			isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn);
+			if (startColumn > 0) isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn-1);
+			if (startColumn < 9) isThreatend |= isFieldSoldierOfOpponent(startRow+1, startColumn+1);
 		}
 		return isThreatend;
 	}
