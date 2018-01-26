@@ -11,22 +11,30 @@ listMoves :: String -> String
 --- YOUR IMPLEMENTATION STARTS HERE ---
 getMove s = head (getMovesList s)
 -- listMoves s = listToString (getMovesList s)
-listMoves s = listToString (uniquify (getMovesList s))
+listMoves s = listToString (sort (uniquify (getMovesList s)))
 
 listToString :: [String] -> String
-listToString xs = "[" ++ (reduceToString xs) ++ "]"
+listToString xs = "[" ++ reduceToString xs ++ "]"
 
 reduceToString :: [String] -> String
 reduceToString [] = undefined
-reduceToString (x:[]) = x
-reduceToString (x:xs) = x ++ "," ++ (reduceToString xs)
+-- reduceToString (x:[]) = x
+reduceToString [x] = x
+reduceToString (x:xs) = x ++ "," ++ reduceToString xs
 
 uniquify :: [String] -> [String]
 uniquify = foldl (\seen x -> if x `elem` seen then seen else seen ++ [x]) []
 
+sort :: Ord a => [a] -> [a]
+sort []     = []
+sort (s:xs) = sort l ++ [s] ++ sort r
+    where
+        l = filter (< s) xs
+        r = filter (>= s) xs
+
 getMovesList :: String -> [String]
-getMovesList s = forwardMoves s ++ captureMoves s ++ retreatMoves s ++ cannonMoves s
--- getMovesList s = ["b8-b4","f8-f5","g6-h5","g5-g2"]
+-- getMovesList s = forwardMoves s ++ captureMoves s ++ retreatMoves s ++ cannonMoves s ++ shotMoves s
+getMovesList s = ["f8-f5","g6-h5","g5-g2","b8-b4"]
 
 -- forSoldiers :: String -> [String]
 -- forSoldiers s =
@@ -37,7 +45,8 @@ getMovesList s = forwardMoves s ++ captureMoves s ++ retreatMoves s ++ cannonMov
 -- forSoldierMoves :: String -> [String]
 
 getCurrentPlayer :: String -> Char
-getCurrentPlayer s = last s
+-- getCurrentPlayer s = last s
+getCurrentPlayer = last
 
 isCurrentPlayer :: Char -> String -> Bool
 isCurrentPlayer p s = p == getCurrentPlayer s
@@ -53,3 +62,6 @@ retreatMoves s = [s]
 
 cannonMoves :: String -> [String]
 cannonMoves s = [s]
+
+shotMoves :: String -> [String]
+shotMoves s = [s]
