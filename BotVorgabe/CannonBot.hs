@@ -12,20 +12,22 @@ import Util
 
 -- listMoves
 -- IN: "4W5/1w1w1w1w1w/1w1w1w1w1w/1w1w1w1w1w///b1b1b1b1b1/b1b1b1b1b1/b1b1b1b1b1/7B2 w"
--- OUT: "[g3-f4,...]" 
+-- OUT: "[g3-f4,...]"
 
 getExampleMovesList :: String
 getExampleMovesList = "[f3-e4,g2-e2]"
 
 getMove :: String -> String
-getMove moves = 
+getMove moves =
     let move:rest = splitOn "," getExampleMovesList in
-    removeFirstElement(move)
+    removeFirstElement move
 
 removeFirstElement :: String -> String
+removeFirstElement "" = ""
 removeFirstElement (y:rest) = rest
 
 removeLastElement :: String -> String
+removeLastElement "" = ""
 removeLastElement list = init list
 
 -----------------------------------------------
@@ -36,8 +38,8 @@ convertBoardString (x:rest) = convertChar x ++ convertBoardString rest
 
 convertChar :: Char -> String
 convertChar x
-    | x == 'w' || x == 'b' || x == 'W' || x == 'B' || x == '/'  = x:[]
-    | otherwise                                                 = extendNumber(digitToInt(x))
+    | x == 'w' || x == 'b' || x == 'W' || x == 'B' || x == '/'  = [x]
+    | otherwise                                                 = extendNumber(digitToInt x)
 
 extendNumber :: Int -> String
 extendNumber 0 = ""
@@ -46,15 +48,16 @@ extendNumber x = "1" ++ extendNumber (x-1)
 ----------------------------------
 
 getBoard :: String
-getBoard = "ww1w1w1w1w/4W5"
+getBoard = "111111111w/9W"
+--getBoard = "ww1w1w1w1w/4W5"
 
 listMoves :: String -> String
 listMoves y =
-    let cBoard = splitOn "/" (convertBoardString getBoard) in  
-    "[" ++ removeLastElement(findMoves(cBoard)) ++ "]"
+    let cBoard = splitOn "/" (convertBoardString getBoard) in
+    "[" ++ removeLastElement(findMoves cBoard) ++ "]"
 
 findMoves :: [String] -> String
-findMoves board = findForwardMoves board
+findMoves = findForwardMoves
 
 findForwardMoves :: [String] -> String
 findForwardMoves (row1:row2:rest) = findForwardMove row1 row2 9 8
@@ -69,7 +72,15 @@ targetEmpty 'w' '1' startRow targetRow startColumn targetColumn = (startColumn, 
 targetEmpty _ _ _ _ _ _ = (20,20,20,20)
 
 convertMove :: (Int, Int, Int, Int) -> String
-convertMove (startColumn, startRow, targetColumn, targetRow) = convertColumn startColumn ++ show startRow ++ "-" convertColumn targetColumn ++ show targetRow ++ ","
+convertMove (startColumn, startRow, targetColumn, targetRow) = getValidMove (convertColumn startColumn ++ convertRow startRow ++ "-" ++ convertColumn targetColumn ++ convertRow targetRow ++ ",")
+
+getValidMove :: String -> String
+getValidMove "-," = ""
+getValidMove s = s
+
+convertRow :: Int -> String
+convertRow 20 = ""
+convertRow x = show x
 
 convertColumn :: Int -> String
 convertColumn 0 = "a"
@@ -86,7 +97,3 @@ convertColumn 20 = ""
 convertColumn _ = "column out of area"
 
 -------------------------
-
-
-
-
