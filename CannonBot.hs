@@ -33,8 +33,8 @@ sort (s:xs) = sort l ++ [s] ++ sort r
         r = filter (>= s) xs
 
 getMovesList :: String -> [String]
--- getMovesList s = forwardMoves s ++ captureMoves s ++ retreatMoves s ++ cannonMoves s ++ shotMoves s
-getMovesList s = ["f8-f5","g6-h5","g5-g2","b8-b4"]
+getMovesList s = forwardMoves s ++ captureMoves s ++ retreatMoves s ++ cannonMoves s ++ shotMoves s
+-- getMovesList s = ["f8-f5","g6-h5","g5-g2","b8-b4"]
 
 -- forSoldiers :: String -> [String]
 -- forSoldiers s =
