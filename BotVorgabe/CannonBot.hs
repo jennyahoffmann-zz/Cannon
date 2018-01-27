@@ -77,7 +77,8 @@ convertColumn _ = "column out of area"
 
 getBoard :: String
 --getBoard = "111111111w/9W w"
-getBoard = "ww1w1w1w1w/4W5/1111w1111w/9W w"
+--getBoard = "ww1w1w1w1w/4W5/1111w1111w/9W w"
+getBoard = "ww1w1w1w1w/4W5/11bbw111ww/9W w"
 
 listMoves :: String -> String
 listMoves y =
@@ -93,17 +94,18 @@ findForwardMoves player board = findStraightForwardMoves player board 8 9
 
 -- player board (startColumn=0) startRow (targetColumn=0) targetRow
 findStraightForwardMoves :: Char -> [String] -> Int -> Int -> String
-findStraightForwardMoves 'b' [row1, row2] startRow targetRow = findForwardMoveInRow row2 0 startRow row1 0 targetRow
-findStraightForwardMoves 'w' [row1, row2] targetRow startRow = findForwardMoveInRow row1 0 startRow row2 0 targetRow
-findStraightForwardMoves 'b' (row1:row2:rest) startRow targetRow = findForwardMoveInRow row2 0 startRow row1 0 targetRow ++ findStraightForwardMoves 'b' (row2:rest) (startRow-1) (targetRow-1)
-findStraightForwardMoves 'w' (row1:row2:rest) targetRow startRow = findForwardMoveInRow row1 0 startRow row2 0 targetRow ++ findStraightForwardMoves 'w' (row2:rest) (targetRow-1) (startRow-1)
+findStraightForwardMoves 'b' [row1, row2] startRow targetRow = findForwardMoveInRow 'b' row2 0 startRow row1 0 targetRow
+findStraightForwardMoves 'w' [row1, row2] targetRow startRow = findForwardMoveInRow 'w' row1 0 startRow row2 0 targetRow
+findStraightForwardMoves 'b' (row1:row2:rest) startRow targetRow = findForwardMoveInRow 'b' row2 0 startRow row1 0 targetRow ++ findStraightForwardMoves 'b' (row2:rest) (startRow-1) (targetRow-1)
+findStraightForwardMoves 'w' (row1:row2:rest) targetRow startRow = findForwardMoveInRow 'w' row1 0 startRow row2 0 targetRow ++ findStraightForwardMoves 'w' (row2:rest) (targetRow-1) (startRow-1)
 
--- row1 startColumn startRow row2 targetColumn targetRow
-findForwardMoveInRow :: String -> Int -> Int -> String -> Int -> Int -> String
-findForwardMoveInRow "" _ _ _ _ _ = ""
-findForwardMoveInRow _ _ _ "" _ _ = ""
-findForwardMoveInRow (start:restRow1) startColumn startRow (target:restRow2) targetColumn targetRow =
-  convertMove (targetEmpty start startColumn startRow target targetColumn targetRow) ++ findForwardMoveInRow restRow1 (startColumn+1) startRow restRow2 (targetColumn+1) targetRow
+-- player row1 startColumn startRow row2 targetColumn targetRow
+findForwardMoveInRow :: Char -> String -> Int -> Int -> String -> Int -> Int -> String
+findForwardMoveInRow _ "" _ _ _ _ _ = ""
+findForwardMoveInRow _ _ _ _ "" _ _ = ""
+findForwardMoveInRow player (start:restRow1) startColumn startRow (target:restRow2) targetColumn targetRow =
+  if start == player then convertMove (targetEmpty start startColumn startRow target targetColumn targetRow) ++ findForwardMoveInRow player restRow1 (startColumn+1) startRow restRow2 (targetColumn+1) targetRow
+  else "" ++ findForwardMoveInRow player restRow1 (startColumn+1) startRow restRow2 (targetColumn+1) targetRow
 
 targetEmpty :: Char -> Int -> Int -> Char -> Int -> Int -> (Int, Int, Int, Int)
 targetEmpty 'w' startColumn startRow '1' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
