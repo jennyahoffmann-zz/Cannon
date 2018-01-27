@@ -34,8 +34,32 @@ removeLastElement list = init list
 -----------------------------------------------
 
 convertBoardString :: String -> String
-convertBoardString "" = ""
-convertBoardString (x:rest) = convertChar x ++ convertBoardString rest
+convertBoardString s = convertChars(handleEmptyRows getBoard)
+
+handleEmptyRows :: String -> String
+handleEmptyRows s = handleMiddleRows(handleLastRow(handleFirstRow s))
+
+handleFirstRow :: String -> String
+handleFirstRow s
+    | '/' == head s = "1111111111" ++ s
+    | otherwise     = s
+
+handleLastRow :: String -> String
+handleLastRow s
+    | '/' == last s = s ++ "1111111111"
+    | otherwise     = s
+
+handleMiddleRows :: String -> String
+handleMiddleRows (c1:c2:[]) --don't change this, doesb't work with [c1, c2]
+    | '/' == c1 && '/' == c2 = c1:"1111111111"
+    | otherwise              = [c1]
+handleMiddleRows (c1:c2:rest)
+    | '/' == c1 && '/' == c2 = (c1:"1111111111") ++ handleMiddleRows (c2:rest)
+    | otherwise              = c1:handleMiddleRows (c2:rest)
+
+convertChars :: String -> String
+convertChars "" = ""
+convertChars (x:rest) = convertChar x ++ convertChars rest
 
 convertChar :: Char -> String
 convertChar x
@@ -78,7 +102,7 @@ convertColumn _ = "column out of area"
 getBoard :: String
 --getBoard = "111111111w/9W w"
 --getBoard = "ww1w1w1w1w/4W5/1111w1111w/9W w"
-getBoard = "ww1w1w1w1w/4W5/11bbw111ww/9W w"
+getBoard = "/ww1w1w1w1w/4W5/11bbw111ww/9W//3b6/ b"
 
 listMoves :: String -> String
 listMoves y =
