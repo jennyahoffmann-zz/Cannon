@@ -99,22 +99,8 @@ convertColumn _ = "column out of area"
 
 -----------------------------------------------
 
-getBoard :: String
---getBoard = "111111111w/9W w"
---getBoard = "ww1w1w1w1w/4W5/1111w1111w/9W w"
-getBoard = "/ww1w1w1w1w/4W5/11bbw111ww/9W//3b6/ b"
-
-listMoves :: String -> String
-listMoves y =
-    let player = last getBoard
-        cBoard = splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard))) in
-    "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
-
-findMoves :: Char -> [String] -> String
-findMoves = findForwardMoves
-
 findForwardMoves :: Char -> [String] -> String
-findForwardMoves player board = findStraightForwardMoves player board 8 9
+findForwardMoves player board = findStraightForwardMoves player board 8 9 ++ findDiagonallyToLeftForwardMoves player board 8 9 ++ findDiagonallyToRightForwardMoves player board 8 9
 
 -- player board (startColumn=0) startRow (targetColumn=0) targetRow
 findStraightForwardMoves :: Char -> [String] -> Int -> Int -> String
@@ -122,6 +108,18 @@ findStraightForwardMoves 'b' [row1, row2] startRow targetRow = findForwardMoveIn
 findStraightForwardMoves 'w' [row1, row2] targetRow startRow = findForwardMoveInRow 'w' row1 0 startRow row2 0 targetRow
 findStraightForwardMoves 'b' (row1:row2:rest) startRow targetRow = findForwardMoveInRow 'b' row2 0 startRow row1 0 targetRow ++ findStraightForwardMoves 'b' (row2:rest) (startRow-1) (targetRow-1)
 findStraightForwardMoves 'w' (row1:row2:rest) targetRow startRow = findForwardMoveInRow 'w' row1 0 startRow row2 0 targetRow ++ findStraightForwardMoves 'w' (row2:rest) (targetRow-1) (startRow-1)
+
+findDiagonallyToLeftForwardMoves :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToLeftForwardMoves 'b' [row1, row2] startRow targetRow = findForwardMoveInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow
+findDiagonallyToLeftForwardMoves 'w' [row1, row2] targetRow startRow = findForwardMoveInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow
+findDiagonallyToLeftForwardMoves 'b' (row1:row2:rest) startRow targetRow = findForwardMoveInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow ++ findDiagonallyToLeftForwardMoves 'b' (row2:rest) (startRow-1) (targetRow-1)
+findDiagonallyToLeftForwardMoves 'w' (row1:row2:rest) targetRow startRow = findForwardMoveInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow ++ findDiagonallyToLeftForwardMoves 'w' (row2:rest) (targetRow-1) (startRow-1)
+
+findDiagonallyToRightForwardMoves :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToRightForwardMoves 'b' [row1, row2] startRow targetRow = findForwardMoveInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow
+findDiagonallyToRightForwardMoves 'w' [row1, row2] targetRow startRow = findForwardMoveInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow
+findDiagonallyToRightForwardMoves 'b' (row1:row2:rest) startRow targetRow = findForwardMoveInRow 'b' row2 0 startRow (removeFirstElement row1) 1 targetRow ++ findDiagonallyToRightForwardMoves 'b' (row2:rest) (startRow-1) (targetRow-1)
+findDiagonallyToRightForwardMoves 'w' (row1:row2:rest) targetRow startRow = findForwardMoveInRow 'w' row1 0 startRow (removeFirstElement row2) 1 targetRow ++ findDiagonallyToRightForwardMoves 'w' (row2:rest) (targetRow-1) (startRow-1)
 
 -- player row1 startColumn startRow row2 targetColumn targetRow
 findForwardMoveInRow :: Char -> String -> Int -> Int -> String -> Int -> Int -> String
@@ -135,3 +133,19 @@ targetEmpty :: Char -> Int -> Int -> Char -> Int -> Int -> (Int, Int, Int, Int)
 targetEmpty 'w' startColumn startRow '1' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
 targetEmpty 'b' startColumn startRow '1' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
 targetEmpty _ _ _ _ _ _ = (20,20,20,20)
+
+-----------------------------------------------
+
+getBoard :: String
+--getBoard = "111111111w/9W w"
+--getBoard = "ww1w1w1w1w/4W5/1111w1111w/9B w"
+getBoard = "/ww1w1w1w1w/2w1W5/11bbw111ww/9B//3b6/ b"
+
+listMoves :: String -> String
+listMoves y =
+    let player = last getBoard
+        cBoard = splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard))) in
+    "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
+
+findMoves :: Char -> [String] -> String
+findMoves = findForwardMoves
