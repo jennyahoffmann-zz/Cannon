@@ -34,7 +34,7 @@ removeLastElement list = init list
 -----------------------------------------------
 
 convertBoardString :: String -> String
-convertBoardString s = convertChars(handleEmptyRows getBoard)
+convertBoardString s = convertChars(handleEmptyRows s)
 
 handleEmptyRows :: String -> String
 handleEmptyRows s = handleMiddleRows(handleLastRow(handleFirstRow s))
@@ -139,7 +139,7 @@ targetEmpty _ _ _ _ _ _ = (20,20,20,20)
 getBoard :: String
 --getBoard = "111111111w/9W w"
 --getBoard = "ww1w1w1w1w/4W5/1111w1111w/9B w"
-getBoard = "/ww1w1w1w1w/2w1W5/11bbw111ww/9B//3b6/ b"
+getBoard = "W9/ww1w1w1w1w/2w1W5/11bbw111ww/9B//3b6/// w"
 
 listMoves :: String -> String
 listMoves y =
@@ -148,4 +148,26 @@ listMoves y =
     "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
 
 findMoves :: Char -> [String] -> String
-findMoves = findForwardMoves
+findMoves player board
+    | isTownSet player board = findForwardMoves player board
+    | otherwise              = setTown player board
+
+setTown :: Char -> [String] -> String
+setTown 'b' board = findAllFreeFieldsInRow (removeFirstElement(removeLastElement(last board))) 1 0 --remove first and last field since we cannot put the town in the corners
+setTown 'w' board = findAllFreeFieldsInRow (removeFirstElement(removeLastElement(head board))) 1 9
+
+findAllFreeFieldsInRow :: String -> Int -> Int -> String
+findAllFreeFieldsInRow [] column row = ""
+findAllFreeFieldsInRow (x:restRow) column row
+    | x == '1' = convertMove(column, row, column, row) ++ findAllFreeFieldsInRow restRow (column+1) row
+    | otherwise = findAllFreeFieldsInRow restRow (column+1) row
+
+isTownSet :: Char -> [String] -> Bool
+isTownSet 'b' board = isTownInRow 'B' (last board)
+isTownSet 'w' board = isTownInRow 'W' (head board)
+
+isTownInRow :: Char -> String -> Bool
+isTownInRow _ [] = False
+isTownInRow c (x:restRow)
+    | x == c    = True
+    | otherwise = isTownInRow c restRow
