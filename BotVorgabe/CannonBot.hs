@@ -158,25 +158,18 @@ targetEmpty _ _ _ _ _ _ = (20,20,20,20)
 
 -----------------------------------------------
 
-getBoard :: String
---getBoard = "111111111w/9W w"
---getBoard = "ww1w1w1w1w/4W5/1111w1111w/9B w"
-getBoard = "1Wb7/ww1w1w1w1w/2w7/11bbw111ww/2w7/4w6/3b6/4w5//1B5w2 b"
+targetEnemy :: Char -> Int -> Int -> Char -> Int -> Int -> (Int, Int, Int, Int)
+targetEnemy 'w' startColumn startRow 'b' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
+targetEnemy 'w' startColumn startRow 'B' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
+targetEnemy 'b' startColumn startRow 'w' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
+targetEnemy 'b' startColumn startRow 'W' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
+targetEnemy _ _ _ _ _ _ = (20,20,20,20)
 
-listMoves :: String -> String
-listMoves y =
-    let player = last getBoard
-        cBoard = splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard))) in
-    "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
-
-findMoves :: Char -> [String] -> String
-findMoves player board
-    | isTownSet player board = findForwardMoves player board ++ findCaptures player board
-    | otherwise              = setTown player board
+-----------------------------------------------
 
 findCaptures :: Char -> [String] -> String
 findCaptures player board = findStraightForwardCaptures player board 8 9 ++ findStraightBackwardCaptures player board 8 9
-  ++ findDiagonallyToLeftForwardCapture player board 8 9 ++ findDiagonallyToRightForwardCapture player board 8 9 ++ findDiagonallyToRightBackwardCaptures player board 8 9
+  ++ findDiagonallyToLeftForwardCaptures player board 8 9 ++ findDiagonallyToRightForwardCaptures player board 8 9 ++ findDiagonallyToRightBackwardCaptures player board 8 9
   ++ findDiagonallyToLeftBackwardCaptures player board 8 9 ++ findSidewaysToLeftCaptures player board 9 9 ++ findSidewaysToRightCaptures player board 9 9
 
 -- player board (startColumn=0) startRow (targetColumn=0) targetRow
@@ -192,17 +185,17 @@ findStraightBackwardCaptures 'w' [row1, row2] startRow targetRow = findCaptureIn
 findStraightBackwardCaptures 'b' (row1:row2:rest) targetRow startRow = findCaptureInRow 'b' row1 0 startRow row2 0 targetRow ++ findStraightBackwardCaptures 'b' (row2:rest) (targetRow-1) (startRow-1)
 findStraightBackwardCaptures 'w' (row1:row2:rest) startRow targetRow = findCaptureInRow 'w' row2 0 startRow row1 0 targetRow ++ findStraightBackwardCaptures 'w' (row2:rest) (startRow-1) (targetRow-1)
 
-findDiagonallyToLeftForwardCapture :: Char -> [String] -> Int -> Int -> String
-findDiagonallyToLeftForwardCapture 'b' [row1, row2] startRow targetRow = findCaptureInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow
-findDiagonallyToLeftForwardCapture 'w' [row1, row2] targetRow startRow = findCaptureInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow
-findDiagonallyToLeftForwardCapture 'b' (row1:row2:rest) startRow targetRow = findCaptureInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow ++ findDiagonallyToLeftForwardCapture 'b' (row2:rest) (startRow-1) (targetRow-1)
-findDiagonallyToLeftForwardCapture 'w' (row1:row2:rest) targetRow startRow = findCaptureInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow ++ findDiagonallyToLeftForwardCapture 'w' (row2:rest) (targetRow-1) (startRow-1)
+findDiagonallyToLeftForwardCaptures :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToLeftForwardCaptures 'b' [row1, row2] startRow targetRow = findCaptureInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow
+findDiagonallyToLeftForwardCaptures 'w' [row1, row2] targetRow startRow = findCaptureInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow
+findDiagonallyToLeftForwardCaptures 'b' (row1:row2:rest) startRow targetRow = findCaptureInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow ++ findDiagonallyToLeftForwardCaptures 'b' (row2:rest) (startRow-1) (targetRow-1)
+findDiagonallyToLeftForwardCaptures 'w' (row1:row2:rest) targetRow startRow = findCaptureInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow ++ findDiagonallyToLeftForwardCaptures 'w' (row2:rest) (targetRow-1) (startRow-1)
 
-findDiagonallyToRightForwardCapture :: Char -> [String] -> Int -> Int -> String
-findDiagonallyToRightForwardCapture 'b' [row1, row2] startRow targetRow = findCaptureInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow
-findDiagonallyToRightForwardCapture 'w' [row1, row2] targetRow startRow = findCaptureInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow
-findDiagonallyToRightForwardCapture 'b' (row1:row2:rest) startRow targetRow = findCaptureInRow 'b' row2 0 startRow (removeFirstElement row1) 1 targetRow ++ findDiagonallyToRightForwardCapture 'b' (row2:rest) (startRow-1) (targetRow-1)
-findDiagonallyToRightForwardCapture 'w' (row1:row2:rest) targetRow startRow = findCaptureInRow 'w' row1 0 startRow (removeFirstElement row2) 1 targetRow ++ findDiagonallyToRightForwardCapture 'w' (row2:rest) (targetRow-1) (startRow-1)
+findDiagonallyToRightForwardCaptures :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToRightForwardCaptures 'b' [row1, row2] startRow targetRow = findCaptureInRow 'b' (removeFirstElement row2) 1 startRow row1 0 targetRow
+findDiagonallyToRightForwardCaptures 'w' [row1, row2] targetRow startRow = findCaptureInRow 'w' (removeFirstElement row1) 1 startRow row2 0 targetRow
+findDiagonallyToRightForwardCaptures 'b' (row1:row2:rest) startRow targetRow = findCaptureInRow 'b' row2 0 startRow (removeFirstElement row1) 1 targetRow ++ findDiagonallyToRightForwardCaptures 'b' (row2:rest) (startRow-1) (targetRow-1)
+findDiagonallyToRightForwardCaptures 'w' (row1:row2:rest) targetRow startRow = findCaptureInRow 'w' row1 0 startRow (removeFirstElement row2) 1 targetRow ++ findDiagonallyToRightForwardCaptures 'w' (row2:rest) (targetRow-1) (startRow-1)
 
 findDiagonallyToRightBackwardCaptures :: Char -> [String] -> Int -> Int -> String
 findDiagonallyToRightBackwardCaptures 'b' [row1, row2] targetRow startRow = findCaptureInRow 'b' row1 0 startRow (removeFirstElement row2) 1 targetRow
@@ -232,9 +225,20 @@ findCaptureInRow player (start:restRow1) startColumn startRow (target:restRow2) 
   if start == player then convertMove (targetEnemy start startColumn startRow target targetColumn targetRow) ++ findCaptureInRow player restRow1 (startColumn+1) startRow restRow2 (targetColumn+1) targetRow
   else "" ++ findCaptureInRow player restRow1 (startColumn+1) startRow restRow2 (targetColumn+1) targetRow
 
-targetEnemy :: Char -> Int -> Int -> Char -> Int -> Int -> (Int, Int, Int, Int)
-targetEnemy 'w' startColumn startRow 'b' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
-targetEnemy 'w' startColumn startRow 'B' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
-targetEnemy 'b' startColumn startRow 'w' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
-targetEnemy 'b' startColumn startRow 'W' targetColumn targetRow = (startColumn, startRow, targetColumn, targetRow)
-targetEnemy _ _ _ _ _ _ = (20,20,20,20)
+-----------------------------------------------
+
+getBoard :: String
+--getBoard = "111111111w/9W w"
+--getBoard = "ww1w1w1w1w/4W5/1111w1111w/9B w"
+getBoard = "1Wb7/ww1w1w1w1w/2w7/11bbw111ww/2w7/4w6/3b6/4w5//1B5w2 b"
+
+listMoves :: String -> String
+listMoves y =
+    let player = last getBoard
+        cBoard = splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard))) in
+    "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
+
+findMoves :: Char -> [String] -> String
+findMoves player board
+    | isTownSet player board = findForwardMoves player board ++ findCaptures player board
+    | otherwise              = setTown player board
