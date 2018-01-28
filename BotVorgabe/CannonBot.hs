@@ -231,23 +231,6 @@ findCaptureInRow player (start:restRow1) startColumn startRow (target:restRow2) 
 
 -----------------------------------------------
 
-getBoard :: String
---getBoard = "111111111w/9W w"
---getBoard = "ww1w1w1w1w/4W5/1111w1111w/9B w"
---getBoard = "1Wb7/ww1w1w1w1w/w1w7/b1bbw111ww/2w7/4w6/w2b6/bb1bw5/w9/1B5w2 b"
-getBoard = "1W6bw/1w8///9w/9b//4bw4//3B4bw b"
-
-listMoves :: String -> String
-listMoves y =
-    let player = last getBoard
-        cBoard = removeSpace(splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard)))) in
-    "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
-
-findMoves :: Char -> [String] -> String
-findMoves player board
-    | isTownSet player board = findRetreats player board --findForwardMoves player board ++ findCaptures player board ++ findRetreats player board
-    | otherwise              = setTown player board
-
 findRetreats :: Char -> [String] -> String
 findRetreats player board = findRetreatsBlack player board ++ findRetreatsWhite player board
 
@@ -343,3 +326,49 @@ isSurroundedBy opponent f1 f2 f3 f4 f5 f6 f7 f8
 getOpponent :: Char -> Char
 getOpponent 'b' = 'w'
 getOpponent 'w' = 'b'
+
+-----------------------------------------------
+
+getBoard :: String
+--getBoard = "111111111w/9W w"
+--getBoard = "ww1w1w1w1w/4W5/1111w1111w/9B w"
+--getBoard = "1Wb7/ww1w1w1w1w/w1w7/b1bbw111ww/2w7/4w6/w2b6/bb1bw5/w9/1B5w2 b"
+getBoard = "1W6bw/1w8//9w/9w/9w/4w5/4wb4/4w5/3B4bw w"
+
+listMoves :: String -> String
+listMoves y =
+    let player = last getBoard
+        cBoard = removeSpace(splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard)))) in
+    "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
+
+findMoves :: Char -> [String] -> String
+findMoves player board
+    | isTownSet player board = findCannonMoves player board --findForwardMoves player board ++ findCaptures player board ++ findRetreats player board
+    | otherwise              = setTown player board
+
+findCannonMoves :: Char -> [String] -> String
+findCannonMoves player board = findStraightUpwardsCannonMoves player board 6 9 ++ findStraightDownwardsCannonMoves player board 9 6
+
+findStraightUpwardsCannonMoves :: Char -> [String] -> Int -> Int -> String
+findStraightUpwardsCannonMoves player [row1,row2,row3,row4] startRow targetRow = findStraightUpwardsCannonMoveInRow player row1 row2 row3 row4 0 startRow 0 targetRow
+findStraightUpwardsCannonMoves player (row1:row2:row3:row4:board) startRow targetRow = findStraightUpwardsCannonMoveInRow player row1 row2 row3 row4 0 startRow 0 targetRow ++ findStraightUpwardsCannonMoves player (row2:row3:row4:board) (startRow-1) (targetRow-1)
+
+findStraightUpwardsCannonMoveInRow :: Char -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findStraightUpwardsCannonMoveInRow player [a] [b] [c] [d] startColumn startRow targetColumn targetRow
+  | b == player && c == player && d == player && isFieldEmpty a = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findStraightUpwardsCannonMoveInRow player (a:row1) (b:row2) (c:row3) (d:row4) startColumn startRow targetColumn targetRow
+  | b == player && c == player && d == player && isFieldEmpty a = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightUpwardsCannonMoveInRow player row1 row2 row3 row4 (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findStraightUpwardsCannonMoveInRow player row1 row2 row3 row4 (startColumn+1) startRow (targetColumn+1) targetRow
+
+findStraightDownwardsCannonMoves :: Char -> [String] -> Int -> Int -> String
+findStraightDownwardsCannonMoves player [row1,row2,row3,row4] startRow targetRow = findStraightDownwardsCannonMoveInRows player row1 row2 row3 row4 0 startRow 0 targetRow
+findStraightDownwardsCannonMoves player (row1:row2:row3:row4:board) startRow targetRow = findStraightDownwardsCannonMoveInRow player row1 row2 row3 row4 0 startRow 0 targetRow ++ findStraightDownwardsCannonMoves player (row2:row3:row4:board) (startRow-1) (targetRow-1)
+
+findStraightDownwardsCannonMoveInRow :: Char -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findStraightDownwardsCannonMoveInRow player [a] [b] [c] [d] startColumn startRow targetColumn targetRow
+  | a == player && b == player && c == player && isFieldEmpty d = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findStraightDownwardsCannonMoveInRow player (a:row1) (b:row2) (c:row3) (d:row4) startColumn startRow targetColumn targetRow
+  | b == player && c == player && a == player && isFieldEmpty d = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightDownwardsCannonMoveInRow player row1 row2 row3 row4 (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findStraightDownwardsCannonMoveInRow player row1 row2 row3 row4 (startColumn+1) startRow (targetColumn+1) targetRow
