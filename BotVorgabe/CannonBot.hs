@@ -232,7 +232,7 @@ findStraightRetreats 'b' board startRow targetRow = let (row1, row2, row3, row4)
 
 findStraightRetreatInRow :: Char -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
 findStraightRetreatInRow player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:row4) startColumn startRow targetColumn targetRow
-    | b1 == player && isSurroundedBy (getOpponent player) a1 a2 b2 c1 c2 '1' '1' '1' && isFieldEmpty d1 && isFieldEmpty c1 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightRetreatInRowLoop player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:row4) (startColumn+1) startRow (targetColumn+1) targetRow
+    | b1 == player && isSurroundedBy (getOpponentSoldier player) a1 a2 b2 c1 c2 '1' '1' '1' && isFieldEmpty d1 && isFieldEmpty c1 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightRetreatInRowLoop player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:row4) (startColumn+1) startRow (targetColumn+1) targetRow
     | otherwise = "" ++ findStraightRetreatInRowLoop player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:row4) (startColumn+1) startRow (targetColumn+1) targetRow
 
 findStraightRetreatInRowLoop :: Char -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
@@ -241,10 +241,10 @@ findStraightRetreatInRowLoop _ _ [x] _ _ _ _ _ _ = ""
 findStraightRetreatInRowLoop _ _ _ [x] _ _ _ _ _ = ""
 findStraightRetreatInRowLoop _ _ _ _ [x] _ _ _ _ = ""
 findStraightRetreatInRowLoop player [a1,a2] [b1,b2] [c1,c2] [d1,d2] startColumn startRow targetColumn targetRow
-    | b2 == player && isSurroundedBy (getOpponent player) a1 a2 '1' b1 '1' c1 c2 '1' && isFieldEmpty c2 && isFieldEmpty d2 = convertMove(startColumn, startRow, targetColumn, targetRow)
+    | b2 == player && isSurroundedBy (getOpponentSoldier player) a1 a2 '1' b1 '1' c1 c2 '1' && isFieldEmpty c2 && isFieldEmpty d2 = convertMove(startColumn, startRow, targetColumn, targetRow)
     | otherwise = ""
 findStraightRetreatInRowLoop player (a1:a2:a3:row1) (b1:b2:b3:row2) (c1:c2:c3:row3) (d1:d2:row4) startColumn startRow targetColumn targetRow
-    | b2 == player && isSurroundedBy (getOpponent player) a1 a2 a3 b1 b3 c1 c2 c3 && isFieldEmpty c2 && isFieldEmpty d2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightRetreatInRowLoop player (a2:a3:row1) (b2:b3:row2) (c2:c3:row3) (d2:row4) (startColumn+1) startRow (targetColumn+1) targetRow
+    | b2 == player && isSurroundedBy (getOpponentSoldier player) a1 a2 a3 b1 b3 c1 c2 c3 && isFieldEmpty c2 && isFieldEmpty d2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightRetreatInRowLoop player (a2:a3:row1) (b2:b3:row2) (c2:c3:row3) (d2:row4) (startColumn+1) startRow (targetColumn+1) targetRow
     | otherwise = "" ++ findStraightRetreatInRowLoop player (a2:a3:row1) (b2:b3:row2) (c2:c3:row3) (d2:row4) (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToLeftRretreats :: Char -> [String] -> Int -> Int -> String
@@ -259,10 +259,10 @@ findDiagonallyToLeftRetreatInRow _ _ [x,y] _ _ _ _ _ _ = ""
 findDiagonallyToLeftRetreatInRow _ _ _ [x,y] _ _ _ _ _ = ""
 findDiagonallyToLeftRetreatInRow _ _ _ _ [x,y] _ _ _ _ = ""
 findDiagonallyToLeftRetreatInRow player [a1,a2,a3] [b1,b2,b3] [c1,c2,c3] [d1,d2,d3] startColumn startRow targetColumn targetRow
-    | b3 == player && isSurroundedBy (getOpponent player) a2 a3 '1' b2 '1' c2 c3 '1' && isFieldEmpty d1 && isFieldEmpty c2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ ""
+    | b3 == player && isSurroundedBy (getOpponentSoldier player) a2 a3 '1' b2 '1' c2 c3 '1' && isFieldEmpty d1 && isFieldEmpty c2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ ""
     | otherwise = ""
 findDiagonallyToLeftRetreatInRow player (a1:a2:a3:a4:row1) (b1:b2:b3:b4:row2) (c1:c2:c3:c4:row3) (d1:row4) startColumn startRow targetColumn targetRow
-    | b3 == player && isSurroundedBy (getOpponent player) a2 a3 a4 b2 b4 c2 c3 c4 && isFieldEmpty d1 && isFieldEmpty c2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftRetreatInRow player (a2:a3:a4:row1) (b2:b3:b4:row2) (c2:c3:c4:row3) row4 (startColumn+1) startRow (targetColumn+1) targetRow
+    | b3 == player && isSurroundedBy (getOpponentSoldier player) a2 a3 a4 b2 b4 c2 c3 c4 && isFieldEmpty d1 && isFieldEmpty c2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftRetreatInRow player (a2:a3:a4:row1) (b2:b3:b4:row2) (c2:c3:c4:row3) row4 (startColumn+1) startRow (targetColumn+1) targetRow
     | otherwise = "" ++ findDiagonallyToLeftRetreatInRow player (a2:a3:a4:row1) (b2:b3:b4:row2) (c2:c3:c4:row3) row4 (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToRightRretreats :: Char -> [String] -> Int -> Int -> String
@@ -273,7 +273,7 @@ findDiagonallyToRightRretreats 'b' board startRow targetRow = let (row1, row2, r
 
 findDiagonallyToRightRretreatInRow :: Char -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
 findDiagonallyToRightRretreatInRow player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:d2:d3:row4) startColumn startRow targetColumn targetRow
-    | b1 == player && isSurroundedBy (getOpponent player) a1 a2 b2 c1 c2 '1' '1' '1' && isFieldEmpty d3 && isFieldEmpty c2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightRretreatInRowLoop player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:d2:d3:row4) (startColumn+1) startRow (targetColumn+1) targetRow
+    | b1 == player && isSurroundedBy (getOpponentSoldier player) a1 a2 b2 c1 c2 '1' '1' '1' && isFieldEmpty d3 && isFieldEmpty c2 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightRretreatInRowLoop player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:d2:d3:row4) (startColumn+1) startRow (targetColumn+1) targetRow
     | otherwise = "" ++ findDiagonallyToRightRretreatInRowLoop player (a1:a2:row1) (b1:b2:row2) (c1:c2:row3) (d1:d2:d3:row4) (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToRightRretreatInRowLoop :: Char -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
@@ -282,10 +282,10 @@ findDiagonallyToRightRretreatInRowLoop _ _ [_,_,_] _ _ _ _ _ _ = ""
 findDiagonallyToRightRretreatInRowLoop _ _ _ [_,_,_] _ _ _ _ _ = ""
 findDiagonallyToRightRretreatInRowLoop _ _ _ _ [_,_,_] _ _ _ _ = ""
 findDiagonallyToRightRretreatInRowLoop player [a1,a2,a3,a4] [b1,b2,b3,b4] [c1,c2,c3,c4] [d1,d2,d3,d4] startColumn startRow targetColumn targetRow
-    | b2 == player && isSurroundedBy (getOpponent player) a1 a2 a3 b1 b3 c1 c2 c3 && isFieldEmpty c3 && isFieldEmpty d4 = convertMove(startColumn, startRow, targetColumn, targetRow)
+    | b2 == player && isSurroundedBy (getOpponentSoldier player) a1 a2 a3 b1 b3 c1 c2 c3 && isFieldEmpty c3 && isFieldEmpty d4 = convertMove(startColumn, startRow, targetColumn, targetRow)
     | otherwise = ""
 findDiagonallyToRightRretreatInRowLoop player (a1:a2:a3:row1) (b1:b2:b3:row2) (c1:c2:c3:row3) (d1:d2:d3:d4:row4) startColumn startRow targetColumn targetRow
-    | b2 == player && isSurroundedBy (getOpponent player) a1 a2 a3 b1 b3 c1 c2 c3 && isFieldEmpty c3 && isFieldEmpty d4 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightRretreatInRowLoop player (a2:a3:row1) (b2:b3:row2) (c2:c3:row3) (d2:d3:d4:row4) (startColumn+1) startRow (targetColumn+1) targetRow
+    | b2 == player && isSurroundedBy (getOpponentSoldier player) a1 a2 a3 b1 b3 c1 c2 c3 && isFieldEmpty c3 && isFieldEmpty d4 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightRretreatInRowLoop player (a2:a3:row1) (b2:b3:row2) (c2:c3:row3) (d2:d3:d4:row4) (startColumn+1) startRow (targetColumn+1) targetRow
     | otherwise = "" ++ findDiagonallyToRightRretreatInRowLoop player (a2:a3:row1) (b2:b3:row2) (c2:c3:row3) (d2:d3:d4:row4) (startColumn+1) startRow (targetColumn+1) targetRow
 
 getLatFourRows :: [String] -> (String, String, String, String)
@@ -304,9 +304,9 @@ isSurroundedBy opponent f1 f2 f3 f4 f5 f6 f7 f8
     | f1 == opponent || f2 == opponent || f3 == opponent || f4 == opponent || f5 == opponent || f6 == opponent || f7 == opponent || f8 == opponent = True
     | otherwise = False
 
-getOpponent :: Char -> Char
-getOpponent 'b' = 'w'
-getOpponent 'w' = 'b'
+getOpponentSoldier :: Char -> Char
+getOpponentSoldier 'b' = 'w'
+getOpponentSoldier 'w' = 'b'
 
 -----------------------------------------------
 
@@ -404,16 +404,32 @@ findDiagonallyToRightDownwardsCannonMoveInRow player (a1:a2:a3:a4:row1) (b1:b2:b
 
 -----------------------------------------------
 
-indStraightUpwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
+findCannonShots ::  Char -> [String] -> String
+findCannonShots player board = findStraightUpwardsShortCannonShots player board 5 9 ++ findStraightDownwardsShortCannonShots player board 9 5 ++ findDiagonallyToLeftUpwardsShortCannonShots player board 5 9
+                               ++ findDiagonallyToRightUpwardsShortCannonShots player board 5 9 ++ findDiagonallyToLeftDownwardsShortCannonShots player board 9 5 ++ findDiagonallyToRightDownwardsShortCannonShots player board 9 5
+                               ++ findStraightUpwardsLongCannonShots player board 4 9 ++ findStraightLongDownwardsLongCannonShots player board 9 4 ++ findDiagonallyToLeftUpwardsLongCannonShots player board 4 9
+                               ++ findDiagonallyToRightUpwardsLongCannonShots player board 4 9 ++ findDiagonallyToLeftDownwardsLongCannonShots player board 9 4 ++ findDiagonallyToRightDownwardsLongCannonShots player board 9 4
+
+-- player field
+isOpponent :: Char -> Char -> Bool
+isOpponent 'b' 'w' = True
+isOpponent 'b' 'W' = True
+isOpponent 'w' 'b' = True
+isOpponent 'w' 'B' = True
+isOpponent _ _ = False
+
+-----------------------------------------------
+
+findStraightUpwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
 findStraightUpwardsShortCannonShots player [row1,row2,row3,row4,row5] startRow targetRow = findStraightUpwardsShortCannonShotInRow player row1 row2 row3 row4 row5 0 startRow 0 targetRow
 findStraightUpwardsShortCannonShots player (row1:row2:row3:row4:row5:board) startRow targetRow = findStraightUpwardsShortCannonShotInRow player row1 row2 row3 row4 row5 0 startRow 0 targetRow ++ findStraightUpwardsShortCannonShots player (row2:row3:row4:row5:board) (startRow-1) (targetRow-1)
 
 findStraightUpwardsShortCannonShotInRow :: Char -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
 findStraightUpwardsShortCannonShotInRow player [a] [b] [c] [d] [e] startColumn startRow targetColumn targetRow
-  | e == player && c == player && d == player && isFieldEmpty b && a == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | e == player && c == player && d == player && isFieldEmpty b && isOpponent player a = convertMove(startColumn, startRow, targetColumn, targetRow)
   | otherwise = ""
 findStraightUpwardsShortCannonShotInRow player (a:row1) (b:row2) (c:row3) (d:row4) (e:row5) startColumn startRow targetColumn targetRow
-  | e == player && c == player && d == player && isFieldEmpty b && a == getOpponent player  = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightUpwardsShortCannonShotInRow player row1 row2 row3 row4 row5 (startColumn+1) startRow (targetColumn+1) targetRow
+  | e == player && c == player && d == player && isFieldEmpty b && isOpponent player a  = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightUpwardsShortCannonShotInRow player row1 row2 row3 row4 row5 (startColumn+1) startRow (targetColumn+1) targetRow
   | otherwise = "" ++ findStraightUpwardsShortCannonShotInRow player row1 row2 row3 row4 row5 (startColumn+1) startRow (targetColumn+1) targetRow
 
 findStraightDownwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
@@ -422,10 +438,10 @@ findStraightDownwardsShortCannonShots player (row1:row2:row3:row4:row5:board) st
 
 findStraightDownwardsShortCannonShotInRow :: Char -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
 findStraightDownwardsShortCannonShotInRow player [a] [b] [c] [d] [e] startColumn startRow targetColumn targetRow
-  | a == player && b == player && c == player && isFieldEmpty d && e == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | a == player && b == player && c == player && isFieldEmpty d && isOpponent player e = convertMove(startColumn, startRow, targetColumn, targetRow)
   | otherwise = ""
 findStraightDownwardsShortCannonShotInRow player (a:row1) (b:row2) (c:row3) (d:row4) (e:row5) startColumn startRow targetColumn targetRow
-  | a == player && b == player && c == player && isFieldEmpty d && e == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightDownwardsShortCannonShotInRow player row1 row2 row3 row4 row5 (startColumn+1) startRow (targetColumn+1) targetRow
+  | a == player && b == player && c == player && isFieldEmpty d && isOpponent player e = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightDownwardsShortCannonShotInRow player row1 row2 row3 row4 row5 (startColumn+1) startRow (targetColumn+1) targetRow
   | otherwise = "" ++ findStraightDownwardsShortCannonShotInRow player row1 row2 row3 row4 row5 (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToLeftUpwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
@@ -439,10 +455,10 @@ findDiagonallyToLeftUpwardsShortCannonShotInRow _ _ _ [_,_,_,_] _ _ _ _ _ _ = ""
 findDiagonallyToLeftUpwardsShortCannonShotInRow _ _ _ _ [_,_,_,_] _ _ _ _ _ = ""
 findDiagonallyToLeftUpwardsShortCannonShotInRow _ _ _ _ _ [_,_,_,_] _ _ _ _ = ""
 findDiagonallyToLeftUpwardsShortCannonShotInRow player [a1,a2,a3,a4,a5] [b1,b2,b3,b4,b5] [c1,c2,c3,c4,c5] [d1,d2,d3,d4,d5] [e1,e2,e3,e4,e5] startColumn startRow targetColumn targetRow
-  | e5 == player && d4 == player && c3 == player && isFieldEmpty b2 && a1 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | e5 == player && d4 == player && c3 == player && isFieldEmpty b2 && isOpponent player a1 = convertMove(startColumn, startRow, targetColumn, targetRow)
   | otherwise = ""
 findDiagonallyToLeftUpwardsShortCannonShotInRow player (a1:a2:a3:a4:a5:row1) (b1:b2:b3:b4:row2) (c1:c2:c3:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) startColumn startRow targetColumn targetRow
-  | e5 == player && d4 == player && c3 == player && isFieldEmpty b2 && a1 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftUpwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
+  | e5 == player && d4 == player && c3 == player && isFieldEmpty b2 && isOpponent player a1 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftUpwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
   | otherwise = "" ++ findDiagonallyToLeftUpwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToRightUpwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
@@ -456,10 +472,10 @@ findDiagonallyToRightUpwardsShortCannonShotInRow _ _ _ [_,_,_,_] _ _ _ _ _ _ = "
 findDiagonallyToRightUpwardsShortCannonShotInRow _ _ _ _ [_,_,_,_] _ _ _ _ _ = ""
 findDiagonallyToRightUpwardsShortCannonShotInRow _ _ _ _ _ [_,_,_,_] _ _ _ _ = ""
 findDiagonallyToRightUpwardsShortCannonShotInRow player [a1,a2,a3,a4,a5] [b1,b2,b3,b4,b5] [c1,c2,c3,c4,c5] [d1,d2,d3,d4,d5] [e1,e2,e3,e4,e5] startColumn startRow targetColumn targetRow
-  | e1 == player && d2 == player && c3 == player && isFieldEmpty b4 && a5 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | e1 == player && d2 == player && c3 == player && isFieldEmpty b4 && isOpponent player a5 = convertMove(startColumn, startRow, targetColumn, targetRow)
   | otherwise = ""
 findDiagonallyToRightUpwardsShortCannonShotInRow player (a1:a2:a3:a4:a5:row1) (b1:b2:b3:b4:row2) (c1:c2:c3:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) startColumn startRow targetColumn targetRow
-  | e1 == player && d2 == player && c3 == player && isFieldEmpty b4 && a5 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightUpwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
+  | e1 == player && d2 == player && c3 == player && isFieldEmpty b4 && isOpponent player a5 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightUpwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
   | otherwise = "" ++ findDiagonallyToRightUpwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToLeftDownwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
@@ -473,10 +489,10 @@ findDiagonallyToLeftDownwardsShortCannonShotInRow _ _ _ [_,_,_,_] _ _ _ _ _ _ = 
 findDiagonallyToLeftDownwardsShortCannonShotInRow _ _ _ _ [_,_,_,_] _ _ _ _ _ = ""
 findDiagonallyToLeftDownwardsShortCannonShotInRow _ _ _ _ _ [_,_,_,_] _ _ _ _ = ""
 findDiagonallyToLeftDownwardsShortCannonShotInRow player [a1,a2,a3,a4,a5] [b1,b2,b3,b4,b5] [c1,c2,c3,c4,c5] [d1,d2,d3,d4,d5] [e1,e2,e3,e4,e5] startColumn startRow targetColumn targetRow
-  | a5 == player && b4 == player && c3 == player && isFieldEmpty d2 && e1 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | a5 == player && b4 == player && c3 == player && isFieldEmpty d2 && isOpponent player e1 = convertMove(startColumn, startRow, targetColumn, targetRow)
   | otherwise = ""
 findDiagonallyToLeftDownwardsShortCannonShotInRow player (a1:a2:a3:a4:a5:row1) (b1:b2:b3:b4:row2) (c1:c2:c3:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) startColumn startRow targetColumn targetRow
-  | a5 == player && b4 == player && c3 == player && isFieldEmpty d2 && e1 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftDownwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
+  | a5 == player && b4 == player && c3 == player && isFieldEmpty d2 && isOpponent player e1 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftDownwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
   | otherwise = "" ++ findDiagonallyToLeftDownwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
 
 findDiagonallyToRightDownwardsShortCannonShots :: Char -> [String] -> Int -> Int -> String
@@ -490,11 +506,105 @@ findDiagonallyToRightDownwardsShortCannonShotInRow _ _ _ [_,_,_,_] _ _ _ _ _ _ =
 findDiagonallyToRightDownwardsShortCannonShotInRow _ _ _ _ [_,_,_,_] _ _ _ _ _ = ""
 findDiagonallyToRightDownwardsShortCannonShotInRow _ _ _ _ _ [_,_,_,_] _ _ _ _ = ""
 findDiagonallyToRightDownwardsShortCannonShotInRow player [a1,a2,a3,a4,a5] [b1,b2,b3,b4,b5] [c1,c2,c3,c4,c5] [d1,d2,d3,d4,d5] [e1,e2,e3,e4,e5] startColumn startRow targetColumn targetRow
-  | a1 == player && b2 == player && c3 == player && isFieldEmpty d4 && e5 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | a1 == player && b2 == player && c3 == player && isFieldEmpty d4 && isOpponent player e5 = convertMove(startColumn, startRow, targetColumn, targetRow)
   | otherwise = ""
 findDiagonallyToRightDownwardsShortCannonShotInRow player (a1:a2:a3:a4:a5:row1) (b1:b2:b3:b4:row2) (c1:c2:c3:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) startColumn startRow targetColumn targetRow
-  | a1 == player && b2 == player && c3 == player && isFieldEmpty d4 && e5 == getOpponent player = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightDownwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
+  | a1 == player && b2 == player && c3 == player && isFieldEmpty d4 && isOpponent player e5 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightDownwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
   | otherwise = "" ++ findDiagonallyToRightDownwardsShortCannonShotInRow player (a2:a3:a4:a5:row1) (b2:b3:b4:row2) (c2:c3:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (startColumn+1) startRow (targetColumn+1) targetRow
+
+-----------------------------------------------
+
+findStraightUpwardsLongCannonShots :: Char -> [String] -> Int -> Int -> String
+findStraightUpwardsLongCannonShots player [row1,row2,row3,row4,row5,row6] startRow targetRow = findStraightUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 0 targetRow
+findStraightUpwardsLongCannonShots player (row1:row2:row3:row4:row5:row6:board) startRow targetRow = findStraightUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 0 targetRow ++ findStraightUpwardsLongCannonShots player (row2:row3:row4:row5:row6:board) (startRow-1) (targetRow-1)
+
+findStraightUpwardsLongCannonShotInRow :: Char -> String -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findStraightUpwardsLongCannonShotInRow player [a] [b] [c] [d] [e] [f] startColumn startRow targetColumn targetRow
+  | f == player && e == player && d == player && isFieldEmpty c && isOpponent player a = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findStraightUpwardsLongCannonShotInRow player (a:row1) (b:row2) (c:row3) (d:row4) (e:row5) (f:row6) startColumn startRow targetColumn targetRow
+  | f == player && e == player && d == player && isFieldEmpty c && isOpponent player a = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findStraightUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 (startColumn+1) startRow (targetColumn+1) targetRow
+
+findStraightLongDownwardsLongCannonShots :: Char -> [String] -> Int -> Int -> String
+findStraightLongDownwardsLongCannonShots player [row1,row2,row3,row4,row5,row6] startRow targetRow = findStraightLongDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 0 targetRow
+findStraightLongDownwardsLongCannonShots player (row1:row2:row3:row4:row5:row6:board) startRow targetRow = findStraightLongDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 0 targetRow ++ findStraightLongDownwardsLongCannonShots player (row2:row3:row4:row5:row6:board) (startRow-1) (targetRow-1)
+
+findStraightLongDownwardsLongCannonShotInRow :: Char -> String -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findStraightLongDownwardsLongCannonShotInRow player [a] [b] [c] [d] [e] [f] startColumn startRow targetColumn targetRow
+  | a == player && b == player && c == player && isFieldEmpty d && isOpponent player f = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findStraightLongDownwardsLongCannonShotInRow player (a:row1) (b:row2) (c:row3) (d:row4) (e:row5) (f:row6) startColumn startRow targetColumn targetRow
+  | a == player && b == player && c == player && isFieldEmpty d && isOpponent player f = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findStraightLongDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findStraightLongDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 (startColumn+1) startRow (targetColumn+1) targetRow
+
+findDiagonallyToLeftUpwardsLongCannonShots :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToLeftUpwardsLongCannonShots player [row1,row2,row3,row4,row5,row6] startRow targetRow = findDiagonallyToLeftUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 5 startRow 0 targetRow
+findDiagonallyToLeftUpwardsLongCannonShots player (row1:row2:row3:row4:row5:row6:board) startRow targetRow = findDiagonallyToLeftUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 5 startRow 0 targetRow ++ findDiagonallyToLeftUpwardsLongCannonShots player (row2:row3:row4:row5:row6:board) (startRow-1) (targetRow-1)
+
+findDiagonallyToLeftUpwardsLongCannonShotInRow :: Char -> String -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findDiagonallyToLeftUpwardsLongCannonShotInRow _ [_,_,_,_,_] _ _ _ _ _ _ _ _ _ = ""
+findDiagonallyToLeftUpwardsLongCannonShotInRow _ _ [_,_,_,_,_] _ _ _ _ _ _ _ _ = ""
+findDiagonallyToLeftUpwardsLongCannonShotInRow _ _ _ [_,_,_,_,_] _ _ _ _ _ _ _ = ""
+findDiagonallyToLeftUpwardsLongCannonShotInRow _ _ _ _ [_,_,_,_,_] _ _ _ _ _ _ = ""
+findDiagonallyToLeftUpwardsLongCannonShotInRow _ _ _ _ _ [_,_,_,_,_] _ _ _ _ _ = ""
+findDiagonallyToLeftUpwardsLongCannonShotInRow player [a1,a2,a3,a4,a5,a6] [b1,b2,b3,b4,b5,b6] [c1,c2,c3,c4,c5,c6] [d1,d2,d3,d4,d5,d6] [e1,e2,e3,e4,e5,e6] [f1,f2,f3,f4,f5,f6] startColumn startRow targetColumn targetRow
+  | f6 == player && e5 == player && d4 == player && isFieldEmpty c3 && isOpponent player a1 = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findDiagonallyToLeftUpwardsLongCannonShotInRow player (a1:a2:a3:a4:a5:a6:row1) (b1:b2:b3:b4:b5:row2) (c1:c2:c3:c4:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) (f1:f2:f3:f4:f5:f6:row6) startColumn startRow targetColumn targetRow
+  | f6 == player && e5 == player && d4 == player && isFieldEmpty c3 && isOpponent player a1 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftUpwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findDiagonallyToLeftUpwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+
+findDiagonallyToRightUpwardsLongCannonShots :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToRightUpwardsLongCannonShots player [row1,row2,row3,row4,row5,row6] startRow targetRow = findDiagonallyToRightUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 5 targetRow
+findDiagonallyToRightUpwardsLongCannonShots player (row1:row2:row3:row4:row5:row6:board) startRow targetRow = findDiagonallyToRightUpwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 5 targetRow ++ findDiagonallyToRightUpwardsLongCannonShots player (row2:row3:row4:row5:row6:board) (startRow-1) (targetRow-1)
+
+findDiagonallyToRightUpwardsLongCannonShotInRow :: Char -> String -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findDiagonallyToRightUpwardsLongCannonShotInRow _ [_,_,_,_,_] _ _ _ _ _ _ _ _ _ = ""
+findDiagonallyToRightUpwardsLongCannonShotInRow _ _ [_,_,_,_,_] _ _ _ _ _ _ _ _ = ""
+findDiagonallyToRightUpwardsLongCannonShotInRow _ _ _ [_,_,_,_,_] _ _ _ _ _ _ _ = ""
+findDiagonallyToRightUpwardsLongCannonShotInRow _ _ _ _ [_,_,_,_,_] _ _ _ _ _ _ = ""
+findDiagonallyToRightUpwardsLongCannonShotInRow _ _ _ _ _ [_,_,_,_,_] _ _ _ _ _ = ""
+findDiagonallyToRightUpwardsLongCannonShotInRow player [a1,a2,a3,a4,a5,a6] [b1,b2,b3,b4,b5,b6] [c1,c2,c3,c4,c5,c6] [d1,d2,d3,d4,d5,d6] [e1,e2,e3,e4,e5,e6] [f1,f2,f3,f4,f5,f6] startColumn startRow targetColumn targetRow
+  | f1 == player && e2 == player && d3 == player && isFieldEmpty c4 && isOpponent player a6 = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findDiagonallyToRightUpwardsLongCannonShotInRow player (a1:a2:a3:a4:a5:a6:row1) (b1:b2:b3:b4:b5:row2) (c1:c2:c3:c4:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) (f1:f2:f3:f4:f5:f6:row6) startColumn startRow targetColumn targetRow
+  | f1 == player && e2 == player && d3 == player && isFieldEmpty c4 && isOpponent player a6 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightUpwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findDiagonallyToRightUpwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+
+findDiagonallyToLeftDownwardsLongCannonShots :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToLeftDownwardsLongCannonShots player [row1,row2,row3,row4,row5,row6] startRow targetRow = findDiagonallyToLeftDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 5 startRow 0 targetRow
+findDiagonallyToLeftDownwardsLongCannonShots player (row1:row2:row3:row4:row5:row6:board) startRow targetRow = findDiagonallyToLeftDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 5 startRow 0 targetRow ++ findDiagonallyToLeftDownwardsLongCannonShots player (row2:row3:row4:row5:row6:board) (startRow-1) (targetRow-1)
+
+findDiagonallyToLeftDownwardsLongCannonShotInRow :: Char -> String -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findDiagonallyToLeftDownwardsLongCannonShotInRow _ [_,_,_,_,_] _ _ _ _ _ _ _ _ _ = ""
+findDiagonallyToLeftDownwardsLongCannonShotInRow _ _ [_,_,_,_,_] _ _ _ _ _ _ _ _ = ""
+findDiagonallyToLeftDownwardsLongCannonShotInRow _ _ _ [_,_,_,_,_] _ _ _ _ _ _ _ = ""
+findDiagonallyToLeftDownwardsLongCannonShotInRow _ _ _ _ [_,_,_,_,_] _ _ _ _ _ _ = ""
+findDiagonallyToLeftDownwardsLongCannonShotInRow _ _ _ _ _ [_,_,_,_,_] _ _ _ _ _ = ""
+findDiagonallyToLeftDownwardsLongCannonShotInRow player [a1,a2,a3,a4,a5,a6] [b1,b2,b3,b4,b5,b6] [c1,c2,c3,c4,c5,c6] [d1,d2,d3,d4,d5,d6] [e1,e2,e3,e4,e5,e6] [f1,f2,f3,f4,f5,f6] startColumn startRow targetColumn targetRow
+  | a6 == player && b5 == player && c4 == player && isFieldEmpty d3 && isOpponent player f1 = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findDiagonallyToLeftDownwardsLongCannonShotInRow player (a1:a2:a3:a4:a5:a6:row1) (b1:b2:b3:b4:b5:row2) (c1:c2:c3:c4:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) (f1:f2:f3:f4:f5:f6:row6) startColumn startRow targetColumn targetRow
+  | a6 == player && b5 == player && c4 == player && isFieldEmpty d3 && isOpponent player f1 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToLeftDownwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findDiagonallyToLeftDownwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+
+findDiagonallyToRightDownwardsLongCannonShots :: Char -> [String] -> Int -> Int -> String
+findDiagonallyToRightDownwardsLongCannonShots player [row1,row2,row3,row4,row5,row6] startRow targetRow = findDiagonallyToRightDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 5 targetRow
+findDiagonallyToRightDownwardsLongCannonShots player (row1:row2:row3:row4:row5:row6:board) startRow targetRow = findDiagonallyToRightDownwardsLongCannonShotInRow player row1 row2 row3 row4 row5 row6 0 startRow 5 targetRow ++ findDiagonallyToRightDownwardsLongCannonShots player (row2:row3:row4:row5:row6:board) (startRow-1) (targetRow-1)
+
+findDiagonallyToRightDownwardsLongCannonShotInRow :: Char -> String -> String -> String -> String -> String -> String -> Int -> Int -> Int -> Int -> String
+findDiagonallyToRightDownwardsLongCannonShotInRow _ [_,_,_,_,_] _ _ _ _ _ _ _ _ _ = ""
+findDiagonallyToRightDownwardsLongCannonShotInRow _ _ [_,_,_,_,_] _ _ _ _ _ _ _ _ = ""
+findDiagonallyToRightDownwardsLongCannonShotInRow _ _ _ [_,_,_,_,_] _ _ _ _ _ _ _ = ""
+findDiagonallyToRightDownwardsLongCannonShotInRow _ _ _ _ [_,_,_,_,_] _ _ _ _ _ _ = ""
+findDiagonallyToRightDownwardsLongCannonShotInRow _ _ _ _ _ [_,_,_,_,_] _ _ _ _ _ = ""
+findDiagonallyToRightDownwardsLongCannonShotInRow player [a1,a2,a3,a4,a5,a6] [b1,b2,b3,b4,b5,b6] [c1,c2,c3,c4,c5,c6] [d1,d2,d3,d4,d5,d6] [e1,e2,e3,e4,e5,e6] [f1,f2,f3,f4,f5,f6] startColumn startRow targetColumn targetRow
+  | a1 == player && b2 == player && c3 == player && isFieldEmpty d4 && isOpponent player f6 = convertMove(startColumn, startRow, targetColumn, targetRow)
+  | otherwise = ""
+findDiagonallyToRightDownwardsLongCannonShotInRow player (a1:a2:a3:a4:a5:a6:row1) (b1:b2:b3:b4:b5:row2) (c1:c2:c3:c4:row3) (d1:d2:d3:d4:row4) (e1:e2:e3:e4:e5:row5) (f1:f2:f3:f4:f5:f6:row6) startColumn startRow targetColumn targetRow
+  | a1 == player && b2 == player && c3 == player && isFieldEmpty d4 && isOpponent player f6 = convertMove(startColumn, startRow, targetColumn, targetRow) ++ findDiagonallyToRightDownwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
+  | otherwise = "" ++ findDiagonallyToRightDownwardsLongCannonShotInRow player (a2:a3:a4:a5:a6:row1) (b2:b3:b4:b5:row2) (c2:c3:c4:row3) (d2:d3:d4:row4) (e2:e3:e4:e5:row5) (f2:f3:f4:f5:f6:row6) (startColumn+1) startRow (targetColumn+1) targetRow
 
 -----------------------------------------------
 
@@ -504,30 +614,24 @@ getBoard :: String
 --getBoard = "1Wb7/ww1w1w1w1w/w1w7/b1bbw111ww/2w7/4w6/w2b6/bb1bw5/w9/1B5w2 b"
 --getBoard = "1W1w5w/1w7b/5b1b2/6b2w/5b1b1w/9w/4w5/4wb4/4w4b/3B4bw b"
 getBoard = "1W1w11111w/" --9
-        ++ "1w1111111b/" --8
-        ++ "11111b1b11/" --7
-        ++ "111111b11w/" --6
-        ++ "1111wb1b1w/" --5
-        ++ "111111111w/" --4
-        ++ "11bww1111w/" --3
-        ++ "1b11wb1111/" --2
-        ++ "b111w1111b/" --1
-        ++ "111B1111bw b"--0
+        ++ "1ww1b1111b/" --8
+        ++ "1111bb1111/" --7
+        ++ "1111b1b111/" --6
+        ++ "1111bbwb1w/" --5
+        ++ "111wbbb11w/" --4
+        ++ "11bww1b11w/" --3
+        ++ "1b111b1111/" --2
+        ++ "b11111111b/" --1
+        ++ "1B11b111bw b"--0
         --  abcdefghij
 
 listMoves :: String -> String
 listMoves y =
-    let player = last getBoard
-        cBoard = removeSpace(splitOn "/" (convertBoardString (removeLastElement(removeLastElement getBoard)))) in
+    let player = last y
+        cBoard = removeSpace(splitOn "/" (convertBoardString (removeLastElement(removeLastElement y)))) in
     "[" ++ removeLastElement(findMoves player cBoard) ++ "]"
 
 findMoves :: Char -> [String] -> String
 findMoves player board
-    | isTownSet player board = findCannonShots player board --findForwardMoves player board ++ findCaptures player board ++ findRetreats player board ++ findCannonMoves player board
+    | isTownSet player board = findCannonShots player board ++ findForwardMoves player board ++ findCaptures player board ++ findRetreats player board ++ findCannonMoves player board
     | otherwise              = setTown player board
-
-findCannonShots ::  Char -> [String] -> String
-findCannonShots player board = findDiagonallyToLeftUpwardsShortCannonShots player board 5 9 ++ findDiagonallyToRightUpwardsShortCannonShots player board 5 9 ++ findDiagonallyToLeftDownwardsShortCannonShots player board 9 5 ++ findDiagonallyToRightDownwardsShortCannonShots player board 9 5
---findStraightUpwardsShortCannonShots player board 5 9 ++ findStraightDownwardsShortCannonShots player board 9 5 ++ findDiagonallyToLeftUpwardsShortCannonShots player board 5 9 ++ findDiagonallyToRightUpwardsShortCannonShots player board 5 9 ++ findDiagonallyToLeftDownwardsShortCannonShots player board 9 5 ++ findDiagonallyToRightDownwardsShortCannonShots player board 9 5
-
-f
